@@ -1,0 +1,35 @@
+{
+    "name": "mondovo/datatable",
+    "description": "Customized version of laravel data table by maximizer ventures",
+    "authors": [
+        {
+            "name": "Jestin",
+            "email": "jestin@maximizer-e-services.com"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "illuminate/config": "~5.0|~5.1|~5.2|~5.3",
+        "illuminate/database": "~5.0|~5.1|~5.2|~5.3",
+        "illuminate/routing": "~5.0|~5.1|~5.2|~5.3",
+        "illuminate/session": "~5.0|~5.1|~5.2|~5.3",
+        "illuminate/support": "~5.0|~5.1|~5.2|~5.3",
+        "yajra/laravel-datatables-oracle": "~8.0",
+        "maatwebsite/excel": "~2.1.0",
+        "nlp-tools/nlp-tools": "~0.1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mondovo\\Datatable\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mondovo\\Datatable\\MondovoDataTableServiceProvider"
+            ]
+        },
+        "minimum-stability": "dev",
+        "prefer-stable": true
+    }
+}

@@ -34,7 +34,23 @@ App::make(MyDataTable::class);
 And that's it! Start building out some awesome DataTables!
 
 #### Set up
+In composer.json add this repository
 
+    "repositories": [  
+        {  
+            "type": "path",  
+            "url": "https://github.com/sameerpanjwani/mondovo-datatables",  
+            "options": {  
+                "symlink": true  
+		     }  
+        }  
+    ]
+
+Run the following command
+
+    composer require mondovo/datatable:"dev-master"
+
+Add the following JS/CSS to the project
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
     <script src="https://app.mondovo.io/plugins/common.js"></script>
     <script src="https://app.mondovo.io/themes/admin_templates/metronic_v3.7/assets/global/plugins/datatables/media/js/jquery.dataTables.min.js" type="text/javascript"></script>

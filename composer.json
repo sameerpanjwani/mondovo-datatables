@@ -20,13 +20,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Mondovo\\Datatable\\": "src/"
+            "Mondovo\\DataTable\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Mondovo\\Datatable\\MondovoDataTableServiceProvider"
+                "Mondovo\\DataTable\\MondovoDataTableServiceProvider"
             ]
         },
         "minimum-stability": "dev",

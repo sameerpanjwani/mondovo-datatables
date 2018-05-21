@@ -6,7 +6,7 @@
  * Time: 9:10 AM
  */
 
-namespace Mondovo\Datatable\Contracts;
+namespace Mondovo\DataTable\Contracts;
 
 interface DataTableJsInterface {
 

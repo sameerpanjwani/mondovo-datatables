@@ -6,7 +6,7 @@
  * Time: 4:15 PM
  */
 
-namespace Mondovo\Datatable\Contracts;
+namespace Mondovo\DataTable\Contracts;
 
 
 interface DrawTableInterface {

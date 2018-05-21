@@ -6,10 +6,10 @@
  * Time: 04:47 PM
  */
 
-namespace Mondovo\Datatable;
+namespace Mondovo\DataTable;
 
 
-use Mondovo\Datatable\Contracts\KeywordHelperServiceInterface;
+use Mondovo\DataTable\Contracts\KeywordHelperServiceInterface;
 use NlpTools\Stemmers\PorterStemmer;
 
 class KeywordHelperService implements KeywordHelperServiceInterface {

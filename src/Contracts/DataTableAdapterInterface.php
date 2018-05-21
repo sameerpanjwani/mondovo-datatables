@@ -1,4 +1,4 @@
-<?php namespace Mondovo\Datatable\Contracts;
+<?php namespace Mondovo\DataTable\Contracts;
 
 /**
  * Created by PhpStorm.

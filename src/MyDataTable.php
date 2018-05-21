@@ -6,13 +6,13 @@
  * Time: 2:44 PM
  */
 
-namespace Mondovo\Datatable;
+namespace Mondovo\DataTable;
 
 use Illuminate\Support\Facades\App;
-use Mondovo\Datatable\Contracts\KeywordGroupPluginServiceInterface;
-use Mondovo\Datatable\Contracts\DataTableFilterInterface;
-use Mondovo\Datatable\Contracts\DataTableJsInterface;
-use Mondovo\Datatable\Contracts\DrawTableInterface;
+use Mondovo\DataTable\Contracts\KeywordGroupPluginServiceInterface;
+use Mondovo\DataTable\Contracts\DataTableFilterInterface;
+use Mondovo\DataTable\Contracts\DataTableJsInterface;
+use Mondovo\DataTable\Contracts\DrawTableInterface;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

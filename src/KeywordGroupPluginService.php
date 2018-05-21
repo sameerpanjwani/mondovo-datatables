@@ -6,11 +6,11 @@
  * Time: 03:49 PM
  */
 
-namespace Mondovo\Datatable;
+namespace Mondovo\DataTable;
 
 use Illuminate\Support\Facades\Cache;
-use Mondovo\Datatable\Contracts\KeywordGroupPluginServiceInterface;
-use Mondovo\Datatable\Contracts\KeywordHelperServiceInterface;
+use Mondovo\DataTable\Contracts\KeywordGroupPluginServiceInterface;
+use Mondovo\DataTable\Contracts\KeywordHelperServiceInterface;
 
 class KeywordGroupPluginService implements KeywordGroupPluginServiceInterface
 {

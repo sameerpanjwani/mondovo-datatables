@@ -6,7 +6,7 @@
  * Time: 3:34 PM
  */
 
-namespace Mondovo\Datatable\Contracts;
+namespace Mondovo\DataTable\Contracts;
 
 
 interface DataTableFilterInterface {

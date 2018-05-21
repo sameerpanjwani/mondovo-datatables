@@ -6,7 +6,7 @@
  * Time: 04:48 PM
  */
 
-namespace Mondovo\Datatable\Contracts;
+namespace Mondovo\DataTable\Contracts;
 
 
 interface KeywordHelperServiceInterface {

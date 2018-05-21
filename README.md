@@ -51,6 +51,7 @@ Run the following command
     composer require mondovo/datatable:"dev-master"
 
 Add the following JS/CSS to the project
+
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
     <script src="https://app.mondovo.io/plugins/common.js"></script>
     <script src="https://app.mondovo.io/themes/admin_templates/metronic_v3.7/assets/global/plugins/datatables/media/js/jquery.dataTables.min.js" type="text/javascript"></script>

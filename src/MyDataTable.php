@@ -108,9 +108,9 @@ class MyDataTable
     public function exportTo($response)
     {
         ini_set('memory_limit','4096M'); //This is required to export tables with many rows like 50,0000
-        $file_type = Request::get('file_type');
-        $report_name = Request::get('export_report_name');
-        $report_date = Request::get('export_report_date');
+        $file_type = \Request::get('file_type');
+        $report_name = \Request::get('export_report_name');
+        $report_date = \Request::get('export_report_date');
         $paying_user = true; //Hard coded to true for now
 
         $file_name = ($report_name != "") ? $report_name : "Mondovo Report";
@@ -290,9 +290,9 @@ class MyDataTable
     public function prepareExcelRows($response, $paying_user)
     {
         $aStripColumns = [];
-        $column_names = Request::get('export_column_names');
-        $export_strip_columns = Request::get('export_strip_columns');
-        $export_num_rows = Request::get('export_num_rows');
+        $column_names = \Request::get('export_column_names');
+        $export_strip_columns = \Request::get('export_strip_columns');
+        $export_num_rows = \Request::get('export_num_rows');
 
         $aColumnNames = json_decode($column_names);
         if($export_strip_columns != ""){
@@ -437,17 +437,17 @@ class MyDataTable
      */
     public function make($mDataSupport = false)
     {
-        $export = Request::get('export');
-        $checkbox_column = Request::get('checkbox_column');
+        $export = \Request::get('export');
+        $checkbox_column = \Request::get('checkbox_column');
 
         //For Column Data Copy - Added By Nikhil
-        $data_copy_flag = Request::get('data_copy') == 'on';
-        $data_copy_column = Request::get('data_copy_col_num');
+        $data_copy_flag = \Request::get('data_copy') == 'on';
+        $data_copy_column = \Request::get('data_copy_col_num');
 
         //For Column Data Copy - Added By Nikhil
-        $data_keyword_grouping = Request::get('data_keyword_grouping') == 'on';
-        $keyword_grouping_column_name = Request::get('keyword_grouping_column_name');
-        $keyword_grouping_column_index = Request::get('keyword_grouping_column_index');
+        $data_keyword_grouping = \Request::get('data_keyword_grouping') == 'on';
+        $keyword_grouping_column_name = \Request::get('keyword_grouping_column_name');
+        $keyword_grouping_column_index = \Request::get('keyword_grouping_column_index');
 
         $data = $this->datatable->make($mDataSupport);
         if($data_keyword_grouping && !empty($keyword_grouping_column_name))
@@ -463,7 +463,7 @@ class MyDataTable
 
         if($data_copy_flag && is_numeric($data_copy_column))
         {
-            $column_name = Request::get('columns')[$data_copy_column]['data'];
+            $column_name = \Request::get('columns')[$data_copy_column]['data'];
             $copied_data = $this->getGivenColumnValues($data, $column_name);
             return json_encode($copied_data);
         }

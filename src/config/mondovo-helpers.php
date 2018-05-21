@@ -12,7 +12,8 @@ return [
 	|
 	*/
 	'package_helpers' => [
-		'translation-helpers'
+		'translation-helpers',
+		'array-helpers'
 	],
 
 	/*

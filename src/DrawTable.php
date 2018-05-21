@@ -8,7 +8,7 @@
 
 namespace Mondovo\DataTable;
 
-use Illuminate\Http\Request;
+use Request;
 use Mondovo\DataTable\Contracts\DrawTableInterface;
 use Mondovo\DataTable\Exceptions\UnsupportedTypeException;
 
@@ -1380,7 +1380,7 @@ class DrawTable implements DrawTableInterface
         } else {
             $toolbar_visibility = $this->toolbar_visibility;
         }
-        $content = view('components.datatable-filter')->with(['table_id' => $table_id, 'toolbar_contents' => $this->toolbar_contents, 'toolbar_visibility' => $toolbar_visibility, 'predefined_filters_in_toolbar' => $this->predefined_filters_in_toolbar, 'export_button_visibility' => $this->export_button_visibility, 'export_report_name' => $this->export_report_name, 'export_report_date' => $this->export_report_date, 'export_strip_columns' => $this->export_strip_columns, 'excel_column_delimiter' => $this->excel_column_delimiter, 'keyword_group_filter' => $this->keyword_group_filter, 'operations' => $this->operations ]);
+        $content = view('mondovo.datatable.datatable-filter')->with(['table_id' => $table_id, 'toolbar_contents' => $this->toolbar_contents, 'toolbar_visibility' => $toolbar_visibility, 'predefined_filters_in_toolbar' => $this->predefined_filters_in_toolbar, 'export_button_visibility' => $this->export_button_visibility, 'export_report_name' => $this->export_report_name, 'export_report_date' => $this->export_report_date, 'export_strip_columns' => $this->export_strip_columns, 'excel_column_delimiter' => $this->excel_column_delimiter, 'keyword_group_filter' => $this->keyword_group_filter, 'operations' => $this->operations ]);
 
         $this->html = $content;
 

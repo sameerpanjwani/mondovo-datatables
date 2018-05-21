@@ -42,8 +42,9 @@ class MondovoDataTableServiceProvider extends ServiceProvider
     public function register()
     {
 	    $this->mergeConfigFrom(__DIR__.'/config/mondovo-datatable.php', 'mondovo-datatable');
+	    $this->mergeConfigFrom(__DIR__.'/config/mondovo-helpers.php', 'mondovo-helpers');
 
-	    foreach (config('helpers.package_helpers', []) as $activeHelper) {
+	    foreach (config('mondovo-helpers.package_helpers', []) as $activeHelper) {
 		    $file = __DIR__ . '/helpers/' . $activeHelper . '.php';
 		    if (file_exists($file)) {
 			    require_once($file);

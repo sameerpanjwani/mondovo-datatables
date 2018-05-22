@@ -1,7 +1,7 @@
 
 # mondovo-datatables
 
-Customized version of jQuery DataTables API for Laravel 4|5+
+Customized version of jQuery DataTables API for Laravel 5.4+
 
 To initialize.
 ```

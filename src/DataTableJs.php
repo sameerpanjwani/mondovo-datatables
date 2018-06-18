@@ -111,6 +111,11 @@ class DataTableJs implements DataTableJsInterface
 
     protected $table_info = false;
 
+    protected $searching = 'true';
+	protected $paging = 'true';
+	protected $ordering = 'true';
+	protected $info = 'true';
+
     function __construct(DataTableFilterInterface $datatable)
     {
 
@@ -1376,4 +1381,40 @@ class DataTableJs implements DataTableJsInterface
         $this->table_info = $description;
         return $this;
     }
+
+	public function disableSearchingPagingOrderingAndInfo()
+	{
+		$this->searching = $this->paging = $this->ordering = $this->info = 'false';
+		return $this;
+	}
+
+	public function disableSearchingPagingAndInfo()
+	{
+		$this->searching = $this->paging = $this->info = 'false';
+		return $this;
+	}
+
+	public function disableSearching()
+	{
+		$this->searching = 'false';
+		return $this;
+	}
+
+	public function disablePaging()
+	{
+		$this->paging = 'false';
+		return $this;
+	}
+
+	public function disableOrdering()
+	{
+		$this->ordering = 'false';
+		return $this;
+	}
+
+	public function disableInfo()
+	{
+		$this->info = 'false';
+		return $this;
+	}
 }

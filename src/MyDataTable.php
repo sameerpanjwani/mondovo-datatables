@@ -1397,4 +1397,48 @@ class MyDataTable
         return $this;
     }
 
+
+
+	public function disableSearchingPagingOrderingAndInfo()
+	{
+		$this->datatable_js->disableSearchingPagingOrderingAndInfo();
+
+		return $this;
+	}
+
+	public function disableSearchingPagingAndInfo()
+	{
+		$this->datatable_js->disableSearchingPagingAndInfo();
+
+		return $this;
+	}
+
+	public function disableSearching()
+	{
+		$this->datatable_js->disableSearching();
+
+		return $this;
+	}
+
+	public function disablePaging()
+	{
+		$this->datatable_js->disablePaging();
+
+		return $this;
+	}
+
+	public function disableOrdering()
+	{
+		$this->datatable_js->disableOrdering();
+
+		return $this;
+	}
+
+	public function disableInfo()
+	{
+		$this->datatable_js->disableInfo();
+
+		return $this;
+	}
+
 }

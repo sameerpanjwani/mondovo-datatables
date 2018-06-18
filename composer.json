@@ -18,6 +18,11 @@
         "maatwebsite/excel": "~2.1.0",
         "nlp-tools/nlp-tools": "~0.1.1"
     },
+    "autoload-dev": {
+        "classmap": [
+            "tests/DrawTableFilterTest.php"
+        ]
+    },
     "autoload": {
         "psr-4": {
             "Mondovo\\DataTable\\": "src/"

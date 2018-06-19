@@ -328,10 +328,10 @@ class DataTableJs implements DataTableJsInterface
         }
         $manager_url = '';
         $kd_modal_url = '';
-        if(config('mondovo-datatable.manager_url') != 0){
+        if(!empty(config('mondovo-datatable.manager_url'))){
 	        $manager_url = route(config('mondovo-datatable.manager_url'));
         }
-        if(config('mondovo-datatable.kd_modal_url') != 0){
+        if(!empty(config('mondovo-datatable.kd_modal_url'))){
 	        $kd_modal_url = route(config('mondovo-datatable.kd_modal_url'));
         }
 

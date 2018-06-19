@@ -125,7 +125,7 @@ foreach($datatable_fixed_columns_objects as $key=>$value)
 }
 ?>
 
-                                 });
+    });
 $("#{{$table_id}}").data("ajax_retry", 0);
 var ajax_request = "{{$ajax_request}}";
 if(ajax_request=="is_ajax"){

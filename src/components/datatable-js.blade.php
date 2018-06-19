@@ -32,6 +32,10 @@ var {{$table_id}}_oTable = $("#{{$table_id}}").DataTable({
                                                             loadingIndicator: true
                                                             },
     <?php } ?>
+                                                            searching: {{ $searching }},
+                                                            paging: {{ $paging }},
+                                                            ordering: {{ $ordering }},
+                                                            info: {{ $info }},
                                                             pageLength:<?=$page_length;?>,
 <?php } ?>
                                                             autoWidth: <?=($auto_width)?'true':'false';?>,

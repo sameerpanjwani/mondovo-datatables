@@ -7,8 +7,8 @@
  */
 
 $stop_words = [
-	file_get_contents('https://mondovo-cdn.s3.amazonaws.com/stop_words.txt'),
-	file_get_contents('https://mondovo-cdn.s3.amazonaws.com/stop_words_first.txt')
+	'https://mondovo-cdn.s3.amazonaws.com/stop_words.txt',
+	'https://mondovo-cdn.s3.amazonaws.com/stop_words_first.txt'
 ];
 
 return [

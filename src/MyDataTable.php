@@ -1441,4 +1441,9 @@ class MyDataTable
 		return $this;
 	}
 
+    public function enableCheckBoxLimit($limit = 10)
+    {
+        $this->datatable_js->enableCheckBoxLimit($limit);
+	}
+
 }

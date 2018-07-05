@@ -26,10 +26,10 @@ var MvDataTableCheckboxDesign = {
         return '<div class="mv_records_toolbar" table-id="' + table_id + '"><hr class="clearfix margin-bottom-10 margin-top-10"><span class="mv_selected_records"><strong>' + records + '</strong> ' + MvDataTableCheckboxDesign.RecordSelected + ' &nbsp;</span></div>';
     },
     TotalRecords: function (total_records) {
-        return '<a class="mv_select_all_records hidden btn blue btn-sm tooltips"> <i class="fa fa-check-square"></i> ' + MvDataTableCheckboxDesign.SelectMsg + ' ' + MvDataTableCheckboxDesign.All + ' ' + total_records + ' ' + MvDataTableCheckboxDesign.RecordMsg + '</a>';
+        return '<a class="mv_select_all_records hidden primary-btn btn btn-sm tooltips"> <i class="fa fa-check-square"></i> ' + MvDataTableCheckboxDesign.SelectMsg + ' ' + MvDataTableCheckboxDesign.All + ' ' + total_records + ' ' + MvDataTableCheckboxDesign.RecordMsg + '</a>';
     },
     ClearRecords: function (records) {
-        return '<a class="mv_clear_records btn btn-default btn-sm" > <i class="fa fa-remove"></i> '+MvDataTableCheckboxDesign.ClearMsg + ' <span class="mv_clear_records_counter">' + records + '</span> ' + MvDataTableCheckboxDesign.CheckboxesMsg+'</a>';
+        return '<a class="mv_clear_records cancel-btn btn btn-sm" > <i class="fa fa-remove"></i> '+MvDataTableCheckboxDesign.ClearMsg + ' <span class="mv_clear_records_counter">' + records + '</span> ' + MvDataTableCheckboxDesign.CheckboxesMsg+'</a>';
     },
     SearchMessage: function (records) {
         return MvDataTableCheckboxDesign.SearchAlertMsg + ' ' + records + ' ' + MvDataTableCheckboxDesign.SearchAlertSuffixMsg;
@@ -124,6 +124,9 @@ var MvDataTableCheckbox = function () {
 
     var individualCheckBox = function (self) {
         var table_id = getTableId(self);
+        if(!checkSelectedCheckBoxCount(self, table_id, false)){
+            return false;
+        }
         var row_index = $(self).parents('tr').index();
         processCheckBox(self, table_id, row_index);
         putRecordsSelected(table_id);
@@ -131,12 +134,16 @@ var MvDataTableCheckbox = function () {
 
     var pageWiseCheckBox = function (self) {
         var table_id = getTableId(self);
-        console.log(dataTableCheckedRecord[table_id]);
         if (typeof dataTableCheckedRecord[table_id] == 'undefined') {
             return false;
         }
 
         $("#" + table_id + " tbody tr").each(function (index) {
+
+            if(!checkSelectedCheckBoxCount(self, table_id, false)){
+                return false;
+            }
+
             var ref = $(this).find('td:eq(0) input');
             if (ref.is(':checked') != $(self).is(':checked')) {
                 ref.prop("checked", $(self).is(':checked'));
@@ -144,6 +151,38 @@ var MvDataTableCheckbox = function () {
             }
         });
         putRecordsSelected(table_id);
+    };
+
+    var checkSelectedCheckBoxCount = function(self, table_id, select_all) {
+        var limit = $('#' + table_id).data('check-box-limit');
+        var status = true;
+
+        if(limit > 0){
+
+            if(!select_all && !$(self).is(':checked')){
+                return true;
+            }
+
+            if(select_all) {
+                var total_records = getTotalRecords(table_id);
+                if(limit < total_records){
+                    status = false;
+                }
+            }else {
+                var selected_count = calculateNoOfRecordsChecked(table_id);
+                if (selected_count >= limit) {
+                    status = false
+                }
+            }
+        }
+
+        if(!status){
+            alert('You cannot select more than ' + limit + 'rows');
+            $(self).removeAttr("checked");
+            $(self).parent('span').removeClass('checked');
+        }
+
+        return status;
     };
 
     var updateUniform = function (table_id) {
@@ -329,6 +368,9 @@ var MvDataTableCheckbox = function () {
 
     var selectAllCheckbox = function (self) {
         var table_id = $(self).parent().attr("table-id");
+        if(!checkSelectedCheckBoxCount(self, table_id, true)){
+            return false;
+        }
         clearOrSelectAllRecords(table_id, true);
     };
 
@@ -665,13 +707,11 @@ var MvDataTableCheckbox = function () {
         if(typeof $('#' + table_id).DataTable().scroller == 'undefined') {
 
             $(document).on('click', "#" + table_id + " ." + css_class.mv_checkbox_page_wise, function () {
-                console.log('Here 123');
                 pageWiseCheckBox(this);
             });
         }else {
 
             $('#' + table_id).parent().parent().find('.' + css_class.mv_checkbox_page_wise).on('click', function () {
-                console.log('Here 456');
                 pageWiseCheckBox(this);
             });
         }

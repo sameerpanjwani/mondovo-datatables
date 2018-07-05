@@ -271,7 +271,23 @@ class KeywordGroupPluginService implements KeywordGroupPluginServiceInterface
 
     public function updateStopWordsVar()
     {
-        $this->stop_words = config('mondovo-datatable.stop_words_list');
+    	$stop_words_key = md5('stop_words_list');
+	    if(Cache::has( $stop_words_key )){
+		    $this->stop_words = Cache::get( $stop_words_key );
+	    }else{
+		    $stop_words_list = config('mondovo-datatable.stop_words_list');
+		    if($stop_words_list){
+		    	foreach ($stop_words_list as $stop_words_item){
+		    		try{
+					    $this->stop_words[] = file_get_contents($stop_words_item);
+				    }catch (Exception $exception){
+		    			continue;
+				    }
+			    }
+			    Cache::put( $stop_words_key, $this->stop_words, 5880 );
+
+		    }
+	    }
     }
 
     public function getKeywordCommonGroups(array $keywords)

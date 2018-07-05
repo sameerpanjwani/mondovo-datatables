@@ -320,6 +320,17 @@ var MvDataTableCheckbox = function () {
         return checked_checkbox;
     };
 
+    var selectFirstNRows = function(table_id, count) {
+        for (var row_index = 0; row_index < count; row_index++){
+            var check_value = dataTableCheckedRecord[table_id]['check_value'];
+            var long_string = makeLongString(table_id, row_index);
+            pushIfNotExist(long_string, check_value);
+        }
+        traverseAllCheckbox(table_id);
+        putRecordsSelected(table_id);
+        return true;
+    };
+
     var traverseAllCheckbox = function (table_id) {
         var record_ref = dataTableCheckedRecord[table_id]['check_value'];
         if (isEnabledSelectAll(table_id)) {
@@ -956,6 +967,9 @@ var MvDataTableCheckbox = function () {
         },
         resetKeyNames: function (table_id) {
             return resetKeyNames(table_id);
+        },
+        selectFirstNRows: function(table_id, count){
+            return selectFirstNRows(table_id, count);
         }
     }
 

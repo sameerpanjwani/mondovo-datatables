@@ -16,7 +16,7 @@ use Mondovo\DataTable\Contracts\DrawTableInterface;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Excel;
+use Excel;
 use Illuminate\Support\Str;
 use PHPExcel_Worksheet_Drawing;
 

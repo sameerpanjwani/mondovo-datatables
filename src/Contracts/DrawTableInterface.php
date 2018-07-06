@@ -80,4 +80,6 @@ interface DrawTableInterface {
 
     public function enableTableOperations();
 
+    public function enableCheckBoxLimit($limit);
+
 }

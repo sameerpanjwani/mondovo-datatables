@@ -154,6 +154,8 @@ class DrawTable implements DrawTableInterface
 
     protected $temp_array = [];
 
+    protected $check_box_limit = 0;
+
     /**
      * @return boolean
      */
@@ -272,7 +274,7 @@ class DrawTable implements DrawTableInterface
     {
         $table_classes = $this->getTableClasses();
 
-        $this->html .= "<table id='$this->table_id' class='$table_classes'>";
+        $this->html .= "<table id='$this->table_id' class='$table_classes' data-check-box-limit='$this->check_box_limit'>";
 
         return $this;
     }
@@ -1620,5 +1622,11 @@ class DrawTable implements DrawTableInterface
         }
 
         return $output_array;
+    }
+
+    public function enableCheckBoxLimit($limit)
+    {
+        $this->check_box_limit = $limit;
+        return $this;
     }
 }

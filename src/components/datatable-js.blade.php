@@ -134,4 +134,7 @@ MvDataTableCheckbox.clearOrSelectAllRecords('{{$table_id}}', false); // This is 
 }
 //console.log("For table id: "+{{$table_id}}+" the ajax request is "+ajax_request);
 before_first_request_{{$table_id}} = false;
+<?php if($pdf_view=="yes") { ?>
+$('#{{$table_id}}').parents('.mv-box-layout').addClass('mv-box-layout-pdf');
+<?php } ?>
 }

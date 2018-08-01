@@ -6,6 +6,11 @@
  * Time: 01:10 PM
  */
 
+$stop_words = [
+	'https://mondovo-cdn.s3.amazonaws.com/stop_words.txt',
+	'https://mondovo-cdn.s3.amazonaws.com/stop_words_first.txt'
+];
+
 return [
 	/*
 	 * In order to integrate the datatable excel export,
@@ -16,10 +21,7 @@ return [
 	'default_logo_url' => 'img/mondovo-logo.png',
 	'demo_user' => false,
 	'access_level' => 1,
-	'manager_url' => 0,
-	'kd_modal_url' => 0,
-	'stop_words_list' => [
-		file_get_contents('https://app.mondovo.live/dummy_files/onPage/stopWords/stop_words.txt'),
-		file_get_contents('https://app.mondovo.live/dummy_files/onPage/stopWords/stop_words_first.txt')
-	]
+	'manager_url' => '',
+	'kd_modal_url' => '',
+	'stop_words_list' => $stop_words
 ];

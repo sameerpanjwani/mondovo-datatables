@@ -16,7 +16,7 @@ use Mondovo\DataTable\Contracts\DrawTableInterface;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Excel;
+use Excel;
 use Illuminate\Support\Str;
 use PHPExcel_Worksheet_Drawing;
 
@@ -1439,6 +1439,13 @@ class MyDataTable
 		$this->datatable_js->disableInfo();
 
 		return $this;
+	}
+
+    public function enableCheckBoxLimit($limit = 10)
+    {
+        $this->drawtable->enableCheckBoxLimit($limit);
+
+        return $this;
 	}
 
 }

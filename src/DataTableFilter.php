@@ -1519,11 +1519,12 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
 
         if(!empty($data))
         {
-            $keys = array_keys($data[0]);
+	        $data_first_row = objectToArray($data[0]);
+	        $keys = array_keys($data_first_row);
             $key = $keys[$column_index];
             foreach ($data as $values)
             {
-                $values_to_be_filtered[] = $values[$key];
+	            $values_to_be_filtered[] = $values->{$key};
             }
         }
 
@@ -1561,10 +1562,10 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
             {
                 if($exclude == 'yes')
                 {
-                    if(!in_array($values[$key], $filtered_values))
+                    if(!in_array($values->{$key}, $filtered_values))
                         $filtered_data[] = $values;
                 }else{
-                    if(in_array($values[$key], $filtered_values))
+                    if(in_array($values->{$key}, $filtered_values))
                         $filtered_data[] = $values;
                 }
             }

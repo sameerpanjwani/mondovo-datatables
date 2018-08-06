@@ -6,11 +6,6 @@
  * Time: 01:10 PM
  */
 
-$stop_words = [
-	'https://mondovo-cdn.s3.amazonaws.com/stop_words.txt',
-	'https://mondovo-cdn.s3.amazonaws.com/stop_words_first.txt'
-];
-
 return [
 	/*
 	 * In order to integrate the datatable excel export,
@@ -22,6 +17,5 @@ return [
 	'demo_user' => false,
 	'access_level' => 1,
 	'manager_url' => '',
-	'kd_modal_url' => '',
-	'stop_words_list' => $stop_words
+	'kd_modal_url' => ''
 ];

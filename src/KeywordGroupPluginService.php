@@ -15,6 +15,12 @@ use Mondovo\DataTable\Contracts\KeywordHelperServiceInterface;
 class KeywordGroupPluginService implements KeywordGroupPluginServiceInterface
 {
 
+	/**
+	 * Array containing the Stop word list, if set.
+	 * @var array|boolean
+	 */
+	static protected $arr_stop_words = false;
+
     /**
      * @var KeywordHelperServiceInterface
     */
@@ -269,25 +275,21 @@ class KeywordGroupPluginService implements KeywordGroupPluginServiceInterface
         return $prepared_words;
     }
 
+	public static function fetchStopWordList()
+	{
+		if (is_array(self::$arr_stop_words)) {
+			return self::$arr_stop_words;
+		}
+		// Fetch Stop Words
+		$stop_words_list = array();
+		include_once('resources/stop-words.php');
+		self::$arr_stop_words = $stop_words_list;
+		return $stop_words_list;
+	}
+
     public function updateStopWordsVar()
     {
-    	$stop_words_key = md5('stop_words_list');
-	    if(Cache::has( $stop_words_key )){
-		    $this->stop_words = Cache::get( $stop_words_key );
-	    }else{
-		    $stop_words_list = config('mondovo-datatable.stop_words_list');
-		    if($stop_words_list){
-		    	foreach ($stop_words_list as $stop_words_item){
-		    		try{
-					    $this->stop_words[] = file_get_contents($stop_words_item);
-				    }catch (Exception $exception){
-		    			continue;
-				    }
-			    }
-			    Cache::put( $stop_words_key, $this->stop_words, 5880 );
-
-		    }
-	    }
+	    $this->stop_words = self::fetchStopWordList();
     }
 
     public function getKeywordCommonGroups(array $keywords)

@@ -18,7 +18,7 @@ var {{$table_id}}_oTable = $("#{{$table_id}}").DataTable({
 <?php } ?>
 <?php if($pdf_view=="yes") { ?>
                                                             //bInfo:false,
-                                                            dom:"",
+                                                            dom:"t",
                                                             //paging:false,
                                                             //searching:false,
                                                             pageLength:<?=$data_rows;?>,

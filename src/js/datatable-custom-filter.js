@@ -264,11 +264,11 @@ var MvDataTableFilter = function () {
     var css_class = MvDataTableFilterDesign.CssClassCollection;
 
     var DataTableFilterSettings = {
-        text: ["=", "Not Equals", "Contains", "Does not contain", "Contains (multiple)", "Does not contain (multiple)", "Starts With", "Ends With", "Is Empty", "Is Not Empty"],
+        text: ["=", "Not Equals", "Contains", "Does not contain", "Contains (multiple)", "Does not contain (multiple)", "Starts With", "Ends With", "Is Blank", "Is Not Blank"],
         select: ["=", "Not Equals"],
         filter: ['In Tags', 'In Keywords', 'In Pages', 'Is of', 'Not In Tags', 'Not In Keywords', 'Not In Pages'],
-        number: ['=', "Not Equals", "&lt;", "&gt;", "&lt;=", "&gt;=", "Between", "Is Empty", "Is Not Empty"],
-        all: ["=", "Not Equals", "Contains", "Does not contain", "&lt;", "&gt;", "&lt;=", "&gt;=", "Is Empty", "Is Not Empty"]
+        number: ['=', "Not Equals", "&lt;", "&gt;", "&lt;=", "&gt;=", "Between", "Is Blank", "Is Not Blank"],
+        all: ["=", "Not Equals", "Contains", "Does not contain", "&lt;", "&gt;", "&lt;=", "&gt;=", "Is Blank", "Is Not Blank"]
     };
 
     var specialOperatorForFilter = {
@@ -1365,7 +1365,7 @@ var MvDataTableFilter = function () {
         $('.' + css_class.operator_select).off('click');
         $('.' + css_class.operator_select).change(function () {
             var option = $(this).find('option:selected').text();
-            if (option == 'Is Empty' || option == 'Is Not Empty') {
+            if (option == 'Is Blank' || option == 'Is Not Blank') {
                 $(this).parent().next().hide();
             } else if(option == 'Contains (multiple)' || option == 'Does not contain (multiple)') {
 
@@ -2622,7 +2622,7 @@ var MvDataTableFilter = function () {
         if (concat_columns_attr.length > 0) {
             concat_columns = concat_columns_attr.join('_') + '_' + concat_separator;
         }
-        if (operator_value == "Is Empty" || operator_value == "Is Not Empty") {
+        if (operator_value == "Is Blank" || operator_value == "Is Not Blank") {
             column_value = '';
         }
 
@@ -2631,7 +2631,7 @@ var MvDataTableFilter = function () {
             /* First time with this operator */
             $("#" + table_id + "_filter ." + css_class.filter_conditions_container).append(MvDataTableFilterDesign.AndField(column_title, operator_value, column_value, column_index, table_id, operator_index_value, data_filter_id, all_values));
         }
-        else if (operator_value != "Is Empty" && operator_value != "Is Not Empty") {
+        else if (operator_value != "Is Blank" && operator_value != "Is Not Blank") {
             var filter_condition_ref = $("#" + table_id + "_filter ." + css_class.filter_conditions_container + " ." + css_class.and_column_input + column_index + operator_index_value);
 
             var data = $.trim(filter_condition_ref.find("." + css_class.and_column_value).html());
@@ -2785,9 +2785,9 @@ var MvDataTableFilter = function () {
                 return operand.toLowerCase().indexOf(search_value.toLowerCase()) >= 0;
             case "Does not contain" :
                 return operand.toLowerCase().indexOf(search_value.toLowerCase()) < 0;
-            case "Is Empty"         :
+            case "Is Blank"         :
                 return operand === '';
-            case "Is Not Empty"     :
+            case "Is Not Blank"     :
                 return operand !== '';
         }
 
@@ -2825,9 +2825,9 @@ var MvDataTableFilter = function () {
                 return '__contains__';
             case "Does not contain" :
                 return '__does__not__contain__';
-            case "Is Empty"         :
+            case "Is Blank"         :
                 return '__is__empty__';
-            case "Is Not Empty"     :
+            case "Is Not Blank"     :
                 return '__is__not__empty__';
             case '<'             :
                 return '__lt__';

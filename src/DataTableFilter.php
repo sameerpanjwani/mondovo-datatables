@@ -1181,8 +1181,8 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
     {
         $collections = [];
 
-        $operator = $operator == 'Is Empty' ? '=' : $operator;
-        $operator = $operator == 'Is Not Empty' ? '<>' : $operator;
+        $operator = $operator == 'Is Blank' ? '=' : $operator;
+        $operator = $operator == 'Is Not Blank' ? '<>' : $operator;
 
         foreach ($search_results as $search_concat) {
 
@@ -1191,7 +1191,7 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
             }
 
             $search_value = $search_concat['search_value'];
-            $search_value = $operator == 'Is Empty' || $operator == 'Is Not Empty' ? '' : $search_value;
+            $search_value = $operator == 'Is Blank' || $operator == 'Is Not Blank' ? '' : $search_value;
             $all_values = (isset($search_concat['all_values'])) ? $search_concat['all_values'] : '';
 
             $collection_temp = $this->collection->filter(function ($row) use ($search_value, $column_index, $operator, $all_values) {
@@ -1638,8 +1638,8 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
                 return 'NOT LIKE';
             case 'Starts With':
             case 'Ends With':
-            case 'Is Empty':
-            case 'Is Not Empty':
+            case 'Is Blank':
+            case 'Is Not Blank':
             case 'In Tags':
             case 'In Keywords':
             case 'In Pages':
@@ -1662,7 +1662,7 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
      */
     private function equivalentToNullCondition($search_value, $operator)
     {
-        return $operator == 'Is Empty' || ($search_value == '[!empty!]' && $operator == '=');
+        return $operator == 'Is Blank' || ($search_value == '[!empty!]' && $operator == '=');
     }
 
     /**
@@ -1672,7 +1672,7 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
      */
     private function equivalentToNotNullCondition($search_value, $operator)
     {
-        return $operator == 'Is Not Empty' || ($search_value == '[!empty!]' && $operator == '<>');
+        return $operator == 'Is Not Blank' || ($search_value == '[!empty!]' && $operator == '<>');
     }
 
     /* Any case Yajra should not handle having columns */

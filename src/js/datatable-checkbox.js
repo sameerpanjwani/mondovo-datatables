@@ -949,11 +949,11 @@ var MvDataTableCheckbox = function () {
             redrawTable(table_id);
         },
         disableFilter: function (table_id) {
-            if (getTotalRecords(table_id) < 5) {
-                $("#" + table_id + " ." + MvDataTableFilterDesign.CssClassCollection.column_filter_container).hide();
+            if (getTotalRecords(table_id) < 10) {
+                $("#" + table_id + " ." + MvDataTableFilterDesign.CssClassCollection.column_filter_container).attr('style','display:none !important');
             }
             else {
-                $("#" + table_id + " ." + MvDataTableFilterDesign.CssClassCollection.column_filter_container).show();
+                $("#" + table_id + " ." + MvDataTableFilterDesign.CssClassCollection.column_filter_container).attr('style','display:table-cell !important');
             }
         },
         clearOrSelectAllRecords: function (table_id, status) {

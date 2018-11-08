@@ -245,8 +245,6 @@ class MyDataTable
 
                 $sheet->fromArray($rows, null, 'A' . $row_count, true, false);
 
-
-
                 $logo_location = $this->getLogo();
 
                 if($this->isExternalUrl($logo_location)){

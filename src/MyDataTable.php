@@ -118,7 +118,7 @@ class MyDataTable
 
         list($head_rows, $rows) = $this->prepareExcelRows($response, $paying_user);
 
-        $excel = Excel::create( $file_name, function($excel) use ($file_name, $report_name, $report_date, $head_rows, $rows, $paying_user)
+        $excel = Excel::store( $file_name, function($excel) use ($file_name, $report_name, $report_date, $head_rows, $rows, $paying_user)
         {
             $sheet_name = (strlen($file_name) > 31) ? substr($file_name, 0, 29). ".." : $file_name;
             $excel->sheet($sheet_name, function($sheet) use ($report_name, $report_date, $head_rows, $rows, $paying_user)

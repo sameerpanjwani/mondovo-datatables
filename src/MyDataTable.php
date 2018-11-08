@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 use Excel;
 use Illuminate\Support\Str;
 use PHPExcel_Worksheet_Drawing;
-
+use PHPExcel_Worksheet_MemoryDrawing;
 /**
  * Class MyDataTable
  * @package App\Helpers\DataTable
@@ -251,7 +251,7 @@ class MyDataTable
 
                 if($this->isExternalUrl($logo_location)){
                     $image = $this->generateImage($logo_location);
-                    $objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+                    $objDrawing = new PHPExcel_Worksheet_MemoryDrawing;
                     $objDrawing->setImageResource($image);
                     $objDrawing->setRenderingFunction(
                         PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG

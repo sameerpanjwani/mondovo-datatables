@@ -18,8 +18,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Excel;
 use Illuminate\Support\Str;
-use PHPExcel_Worksheet_Drawing;
-use PHPExcel_Worksheet_MemoryDrawing;
+use \PhpOffice\PhpSpreadsheet\Worksheet\Drawing as PHPExcel_Worksheet_Drawing;
+use \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing as PHPExcel_Worksheet_MemoryDrawing;
 /**
  * Class MyDataTable
  * @package App\Helpers\DataTable

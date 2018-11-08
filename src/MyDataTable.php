@@ -20,6 +20,7 @@ use Excel;
 use Illuminate\Support\Str;
 use PHPExcel_Worksheet_Drawing;
 use PHPExcel_Worksheet_MemoryDrawing;
+
 /**
  * Class MyDataTable
  * @package App\Helpers\DataTable
@@ -34,17 +35,17 @@ class MyDataTable
 
     protected $builder;
 
-	protected $drawtable;
+    protected $drawtable;
 
-	protected $datatable;
+    protected $datatable;
 
-	protected $datatable_js;
+    protected $datatable_js;
 
-	protected $request;
+    protected $request;
 
-	protected $logo_path;
+    protected $logo_path;
 
-	/**
+    /**
      * @param DrawTableInterface $drawtable
      * @param DataTableFilterInterface $datatable
      * @param DataTableJsInterface $datatable_js
@@ -85,16 +86,13 @@ class MyDataTable
         $input_columns_query_builder_object = $this->datatable->columns;
         $having_and_raw_columns = [];
 
-        foreach ($input_columns_query_builder_object as $column_index => $column_expr)
-        {
-            if ($column_expr instanceof Expression)
-            {
+        foreach ($input_columns_query_builder_object as $column_index => $column_expr) {
+            if ($column_expr instanceof Expression) {
                 $having_and_raw_columns[] = $column_index;
             }
         }
 
-        if (!empty($having_and_raw_columns))
-        {
+        if (!empty($having_and_raw_columns)) {
             $this->setAllHavingColumns($having_and_raw_columns)->setAllRawColumns($having_and_raw_columns);
         }
 
@@ -107,7 +105,7 @@ class MyDataTable
      */
     public function exportTo($response)
     {
-        ini_set('memory_limit','4096M'); //This is required to export tables with many rows like 50,0000
+        ini_set('memory_limit', '4096M'); //This is required to export tables with many rows like 50,0000
         $file_type = \Request::get('file_type');
         $report_name = \Request::get('export_report_name');
         $report_date = \Request::get('export_report_date');
@@ -118,45 +116,43 @@ class MyDataTable
 
         list($head_rows, $rows) = $this->prepareExcelRows($response, $paying_user);
 
-        $excel = Excel::create( $file_name, function($excel) use ($file_name, $report_name, $report_date, $head_rows, $rows, $paying_user)
-        {
-            $sheet_name = (strlen($file_name) > 31) ? substr($file_name, 0, 29). ".." : $file_name;
-            $excel->sheet($sheet_name, function($sheet) use ($report_name, $report_date, $head_rows, $rows, $paying_user)
-            {
+        $excel = Excel::create($file_name, function ($excel) use ($file_name, $report_name, $report_date, $head_rows, $rows, $paying_user) {
+            $sheet_name = (strlen($file_name) > 31) ? substr($file_name, 0, 29) . ".." : $file_name;
+            $excel->sheet($sheet_name, function ($sheet) use ($report_name, $report_date, $head_rows, $rows, $paying_user) {
                 $row_count = 3;
 
-                if(!$paying_user){
+                if (!$paying_user) {
                     $sheet->setCellValue('B2', "Only 5 rows shown as your plan does not allow for full downloads or you are still under a free trial.");
                     $sheet->mergeCells('B2:H2');
 
-                    $sheet->row(2, function($row){
+                    $sheet->row(2, function ($row) {
                         $row->setFontWeight('bold');
                         $row->setFontColor('#ff0000');
                     });
                 }
 
-                if($report_name != ''){
+                if ($report_name != '') {
                     $sheet->setCellValue('A' . $row_count, "Report Name:");
                     $sheet->setCellValue('B' . $row_count, $report_name);
 
-                    $sheet->row($row_count, function($row) use($paying_user){
+                    $sheet->row($row_count, function ($row) use ($paying_user) {
                         $row->setFontWeight('bold');
 
-                        if(!$paying_user)
+                        if (!$paying_user)
                             $row->setFontColor('#ff0000');
                     });
 
                     $row_count++;
                 }
 
-                if($report_date != ''){
+                if ($report_date != '') {
                     $sheet->setCellValue('A' . $row_count, "Report Date:");
                     $sheet->setCellValue('B' . $row_count, $report_date);
 
-                    $sheet->row($row_count, function($row) use($paying_user){
+                    $sheet->row($row_count, function ($row) use ($paying_user) {
                         $row->setFontWeight('bold');
 
-                        if(!$paying_user)
+                        if (!$paying_user)
                             $row->setFontColor('#ff0000');
                     });
 
@@ -171,17 +167,13 @@ class MyDataTable
                 $header_starts_at = $row_count;
                 $index = 0;
                 $merged_rows = [];
-                foreach ($head_rows as $row_heading)
-                {
+                foreach ($head_rows as $row_heading) {
                     $alphabet_index = 0;
                     $col_index = 0;
-                    foreach ($row_heading as $heading)
-                    {
+                    foreach ($row_heading as $heading) {
                         //print_data($merged_rows);
-                        if(isset($merged_rows[$row_count]))
-                        {
-                            while(in_array($alphabet_index, $merged_rows[$row_count]))
-                            {
+                        if (isset($merged_rows[$row_count])) {
+                            while (in_array($alphabet_index, $merged_rows[$row_count])) {
                                 $alphabet_index++;
                             }
                         }
@@ -189,26 +181,22 @@ class MyDataTable
                         $cell = $this->getExcelColumnNameFromNumber($alphabet_index) . "$row_count";
                         $cell_val = strip_tags($heading->col_name);
                         //echo '$sheet->setCellValue("' . $cell . '", "'. $cell_val . '");' . "<br />";
-                        while($sheet->getCell($cell) != "")
-                        {
+                        while ($sheet->getCell($cell) != "") {
                             $alphabet_index++;
                             $cell = $this->getExcelColumnNameFromNumber($alphabet_index) . "$row_count";
                         }
                         $sheet->setCellValue($cell, $cell_val);
 
-                        if($heading->rowspan > 1)
-                        {
-                            $merge = $this->getExcelColumnNameFromNumber($alphabet_index) . $row_count . ":" . $this->getExcelColumnNameFromNumber($alphabet_index) . ($row_count + $heading->rowspan -1);
+                        if ($heading->rowspan > 1) {
+                            $merge = $this->getExcelColumnNameFromNumber($alphabet_index) . $row_count . ":" . $this->getExcelColumnNameFromNumber($alphabet_index) . ($row_count + $heading->rowspan - 1);
                             //echo '$sheet->mergeCells("' . $merge . '");' . "<br>";
                             $sheet->mergeCells($merge);
 
-                            for ($i = $row_count + 1; $i < $row_count + $heading->rowspan; $i++)
-                            {
+                            for ($i = $row_count + 1; $i < $row_count + $heading->rowspan; $i++) {
                                 $merged_rows[$i][] = $alphabet_index;
                             }
                         }
-                        if($heading->colspan > 1)
-                        {
+                        if ($heading->colspan > 1) {
                             $merge = $this->getExcelColumnNameFromNumber($alphabet_index) . $row_count . ":" . $this->getExcelColumnNameFromNumber($alphabet_index + ($heading->colspan - 1)) . $row_count;
                             //echo "$alphabet_index + " . $heading->colspan . "<br>";
                             //echo '$sheet->mergeCells("' . $merge . '");' . "<br>";
@@ -216,7 +204,7 @@ class MyDataTable
                         }
                         //echo "<br>";
 
-                        $sheet->cell($cell, function($cell) {
+                        $sheet->cell($cell, function ($cell) {
                             // manipulate the cell
                             $cell->setBorder('solid', 'solid', 'solid', 'solid');
                             $cell->setAlignment('center');
@@ -235,8 +223,8 @@ class MyDataTable
                 ////////////
 
                 $j = $header_starts_at + count($head_rows);
-                for($i = $header_starts_at; $i < $j; $i++)
-                    $sheet->row($i, function($row){
+                for ($i = $header_starts_at; $i < $j; $i++)
+                    $sheet->row($i, function ($row) {
                         $row->setFontWeight('bold');
                         $row->setBackground('#366092');
                         $row->setFontColor('#ffffff');
@@ -247,7 +235,7 @@ class MyDataTable
 
                 $logo_location = $this->getLogo();
 
-                if($this->isExternalUrl($logo_location)){
+                if ($this->isExternalUrl($logo_location)) {
                     $image = $this->generateImage($logo_location);
                     $objDrawing = new PHPExcel_Worksheet_MemoryDrawing;
                     $objDrawing->setImageResource($image);
@@ -261,14 +249,13 @@ class MyDataTable
                     $objDrawing->setPath($logo_location);
                 }
 
-
                 $objDrawing->setCoordinates('A1');
                 $objDrawing->setOffsetX(10);
                 $objDrawing->setOffsetY(20);
                 $objDrawing->setWorksheet($sheet);
 
                 $sheet->getRowDimension('1')
-                ->setRowHeight(70);
+                    ->setRowHeight(70);
 
             });
         })->export($file_type);
@@ -276,9 +263,10 @@ class MyDataTable
         return $excel;
     }
 
-    protected function isExternalUrl($logo_location){
+    protected function isExternalUrl($logo_location)
+    {
 
-        if(strpos($logo_location,"http")===0){
+        if (strpos($logo_location, "http") === 0) {
             return true;
         }
 
@@ -286,10 +274,11 @@ class MyDataTable
 
     }
 
-    protected function generateImage($logo_location){
-        $image_path_parts = explode(".",$logo_location);
-        $image_extension = $image_path_parts[count($image_path_parts)-1];
-        switch($image_extension){
+    protected function generateImage($logo_location)
+    {
+        $image_path_parts = explode(".", $logo_location);
+        $image_extension = $image_path_parts[count($image_path_parts) - 1];
+        switch ($image_extension) {
             case "gif":
                 $image = imagecreatefromgif($logo_location);
                 break;
@@ -307,8 +296,9 @@ class MyDataTable
     }
 
 
-    protected function getLogo(){
-	    $logo_loc = config('mondovo-datatable.default_logo_url');
+    protected function getLogo()
+    {
+        $logo_loc = config('mondovo-datatable.default_logo_url');
         return $logo_loc;
     }
 
@@ -337,7 +327,7 @@ class MyDataTable
         $export_num_rows = \Request::get('export_num_rows');
 
         $aColumnNames = json_decode($column_names);
-        if($export_strip_columns != ""){
+        if ($export_strip_columns != "") {
             $aStripColumns = explode($this->drawtable->excel_column_delimiter, $export_strip_columns);
         }
 
@@ -345,31 +335,29 @@ class MyDataTable
 
         $counter = 0;
         $excel_rows = [];
-        foreach ($rows as $row)
-        {
-            $temp = (array) $row;
+        foreach ($rows as $row) {
+            $temp = (array)$row;
             $this->removeColumnsForExcel($aStripColumns, $temp);
             //$excel_rows[] = array_map('strip_tags', $temp);
             $temp = array_map('strip_tags', $temp);
 
-            foreach ($temp as $key => $cell_value)
-            {
+            foreach ($temp as $key => $cell_value) {
                 $cell_value = trim($cell_value);
                 if (substr($cell_value, 0, 1) == '=') { //Check if the cell value starts with =. if yes then add a space at the beginning of cell value
                     $cell_value = " " . $cell_value;
                 }
-                $temp[$key] = (is_numeric($cell_value)) ? (float) $cell_value : $cell_value;
+                $temp[$key] = (is_numeric($cell_value)) ? (float)$cell_value : $cell_value;
             }
 
             $excel_rows[] = $temp;
 
             $counter++;
 
-            if(!$paying_user && $counter > 4)
+            if (!$paying_user && $counter > 4)
                 break;
         }
 
-        if($export_num_rows > 0){
+        if ($export_num_rows > 0) {
             $excel_rows = array_slice($excel_rows, 0, $export_num_rows);
         }
 
@@ -394,13 +382,12 @@ class MyDataTable
      */
     public function removeColumnsForExcel($aStripColumns, &$array_columns)
     {
-        if(isset($array_columns['check_box_id']))
+        if (isset($array_columns['check_box_id']))
             unset($array_columns['check_box_id']);
 
         arsort($aStripColumns);
-        foreach($aStripColumns as $column_index)
-        {
-            if(is_numeric($column_index))
+        foreach ($aStripColumns as $column_index) {
+            if (is_numeric($column_index))
                 array_splice($array_columns, $column_index, 1);
             else
                 unset($array_columns[$column_index]);
@@ -454,9 +441,10 @@ class MyDataTable
         return $this;
     }
 
-	public function disableCache() {
-		$this->datatable->disableCache();
-		return $this;
+    public function disableCache()
+    {
+        $this->datatable->disableCache();
+        return $this;
     }
 
     /**
@@ -492,30 +480,26 @@ class MyDataTable
         $keyword_grouping_column_index = \Request::get('keyword_grouping_column_index');
 
         $data = $this->datatable->make($mDataSupport);
-        if($data_keyword_grouping && !empty($keyword_grouping_column_name))
-        {
+        if ($data_keyword_grouping && !empty($keyword_grouping_column_name)) {
             return $this->setKeywordGroups($keyword_grouping_column_name, $data, $keyword_grouping_column_index);
-        }
-        elseif ($data_keyword_grouping)
-        {
+        } elseif ($data_keyword_grouping) {
             return json_encode([]);
         }
 
         $data = $this->appendMetaData($data);
 
-        if($data_copy_flag && is_numeric($data_copy_column))
-        {
+        if ($data_copy_flag && is_numeric($data_copy_column)) {
             $column_name = \Request::get('columns')[$data_copy_column]['data'];
             $copied_data = $this->getGivenColumnValues($data, $column_name);
             return json_encode($copied_data);
         }
 
-        if ($export){
+        if ($export) {
             $this->exportTo($data);
-        }elseif($checkbox_column) {
+        } elseif ($checkbox_column) {
             //return $this->builder->pluck($checkbox_column); //only the selected checkbox column data will return // This give all the values so commented and below line is implemented
             return $this->getGivenColumnValues($data, $checkbox_column);
-        }else{
+        } else {
             return $data;
         }
     }
@@ -526,8 +510,7 @@ class MyDataTable
         $values = [];
 
         $main_data_array = $data->getData()->data;
-        foreach ($main_data_array as $main_data)
-        {
+        foreach ($main_data_array as $main_data) {
             $values[] = trim(strip_tags($main_data->$column));
         }
 
@@ -631,7 +614,7 @@ class MyDataTable
      */
     public function enableFilter()
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
         $this->drawtable->withFilter();
@@ -646,20 +629,18 @@ class MyDataTable
 
     /**
      * Column Name
-    */
+     */
     public function enableTextSelectorFilter($column_name)
     {
         $data_columns = $this->datatable_js->getDataColumns();
         $check_box_enabled = $this->datatable_js->isEnabledDrawCheckbox();
 
         $column_index = array_search($column_name, $data_columns);
-        if (is_bool($column_index))
-        {
+        if (is_bool($column_index)) {
             return $this;
         }
 
-        if($check_box_enabled)
-        {
+        if ($check_box_enabled) {
             $column_index++;
         }
 
@@ -690,7 +671,7 @@ class MyDataTable
     public function withCheckbox($checkbox_th_width = '', $rowspan = '1')
     {
         $access_level = config('mondovo-datatable.access_level');
-        if($this->request->input('pdf_view')=="yes" || $access_level == 3){
+        if ($this->request->input('pdf_view') == "yes" || $access_level == 3) {
             return $this;
         }
         $this->drawtable->withCheckbox($checkbox_th_width, $rowspan);
@@ -928,6 +909,7 @@ class MyDataTable
     }
 
     //Added by Sameer on 17th June, 2016
+
     /**
      * If you have defined a class called 'default-hidden' for any column, it will hide those columns in JS
      * @return $this
@@ -1053,9 +1035,9 @@ class MyDataTable
         return $this;
     }
 
-    public function addToKeywordManagerByColumnName($column_name, $type, $button_text='')
+    public function addToKeywordManagerByColumnName($column_name, $type, $button_text = '')
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
         $this->datatable_js->addToKeywordManager($column_name, $type, $button_text);
@@ -1063,9 +1045,9 @@ class MyDataTable
         return $this;
     }
 
-    public function addToKeywordManagerByColumnIndex($column_index, $type, $button_text='')
+    public function addToKeywordManagerByColumnIndex($column_index, $type, $button_text = '')
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
         $this->datatable_js->addToKeywordManager($column_index, $type, $button_text);
@@ -1073,9 +1055,9 @@ class MyDataTable
         return $this;
     }
 
-    public function addToPageManagerByColumnName($column_name, $type, $button_text='')
+    public function addToPageManagerByColumnName($column_name, $type, $button_text = '')
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
         $this->datatable_js->addToPageManager($column_name, $type, $button_text);
@@ -1083,9 +1065,9 @@ class MyDataTable
         return $this;
     }
 
-    public function addToPageManagerByColumnIndex($column_name, $type, $button_text='')
+    public function addToPageManagerByColumnIndex($column_name, $type, $button_text = '')
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
         $this->datatable_js->addToPageManager($column_name, $type, $button_text);
@@ -1093,9 +1075,9 @@ class MyDataTable
         return $this;
     }
 
-    public function addToTagManagerByColumnName($column_name, $type, $button_text='')
+    public function addToTagManagerByColumnName($column_name, $type, $button_text = '')
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
         $this->datatable_js->addToTagManager($column_name, $type, $button_text);
@@ -1105,7 +1087,7 @@ class MyDataTable
 
     public function enableCopyToClipboardByColumnName($column_name, $button_text, $callback_fn = '')
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
 
@@ -1116,7 +1098,7 @@ class MyDataTable
 
     public function enableCopyAndAddToFilterByColumnName($column_name, $button_text, $callback_fn)
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
 
@@ -1127,7 +1109,7 @@ class MyDataTable
 
     public function enableBulkKdProcess($column_name, $button_text)
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
 
@@ -1136,9 +1118,9 @@ class MyDataTable
         return $this;
     }
 
-    public function addToTagManagerByColumnIndex($column_name, $type, $button_text='')
+    public function addToTagManagerByColumnIndex($column_name, $type, $button_text = '')
     {
-        if($this->request->input('pdf_view')=="yes"){
+        if ($this->request->input('pdf_view') == "yes") {
             return $this;
         }
         $this->datatable_js->addToTagManager($column_name, $type, $button_text);
@@ -1237,9 +1219,9 @@ class MyDataTable
         return $this->datatable->of($builder);
     }
 
-    private function createShowHideColumnsToolBar($table_id, array $contents,$custom_title="Show / Hide Columns", $list_id = '')
+    private function createShowHideColumnsToolBar($table_id, array $contents, $custom_title = "Show / Hide Columns", $list_id = '')
     {
-        return view('components.show-hide-columns-toolbar', ['table_id' => $table_id, 'hide_show_elements' => $contents,'custom_title'=>$custom_title, 'list_id' => $list_id]);
+        return view('components.show-hide-columns-toolbar', ['table_id' => $table_id, 'hide_show_elements' => $contents, 'custom_title' => $custom_title, 'list_id' => $list_id]);
     }
 
     /* What Needs to be Done:
@@ -1278,10 +1260,10 @@ class MyDataTable
                         ]
                     ];
      * */
-    public function addHideShowColumnsToToolbar(array $contents,$custom_title="Show / Hide Columns", $list_id = '')
+    public function addHideShowColumnsToToolbar(array $contents, $custom_title = "Show / Hide Columns", $list_id = '')
     {
         $table_id = $this->drawtable->getTableId();
-        $show_hide_content = $this->createShowHideColumnsToolBar($table_id,$contents,$custom_title, $list_id);
+        $show_hide_content = $this->createShowHideColumnsToolBar($table_id, $contents, $custom_title, $list_id);
         $this->addToToolbar($show_hide_content);
         return $this;
     }
@@ -1320,17 +1302,13 @@ class MyDataTable
         $max_analyzed_keywords = 25000;
         $warning_flag = false;
 
-        if (empty($column_index))
-        {
+        if (empty($column_index)) {
             return json_encode([]);
         }
 
-        if (!empty($data_value_array))
-        {
-            foreach ($data_value_array as $item)
-            {
-                if ($counter >= $max_analyzed_keywords)
-                {
+        if (!empty($data_value_array)) {
+            foreach ($data_value_array as $item) {
+                if ($counter >= $max_analyzed_keywords) {
                     $warning_flag = true;
                     break;
                 }
@@ -1339,32 +1317,27 @@ class MyDataTable
             }
         }
 
-        if (empty($keywords))
-        {
+        if (empty($keywords)) {
             return json_encode([]);
         }
 
         $keyword_group_plugin_service = App::make(KeywordGroupPluginServiceInterface::class);
 
-        try
-        {
+        try {
             $keyword_groups = $keyword_group_plugin_service->keywordGroupingType3($keywords);
-        }
-        catch (\Exception $e)
-        {
-            mail_me('nikhil', 'Msg: ' . $e->getMessage() . ' Line: '. $e->getLine() . ' File: ' . $e->getFile());
+        } catch (\Exception $e) {
+            mail_me('nikhil', 'Msg: ' . $e->getMessage() . ' Line: ' . $e->getLine() . ' File: ' . $e->getFile());
             $keyword_groups = [];
         }
 
-        if (empty($keyword_groups))
-        {
+        if (empty($keyword_groups)) {
             return json_encode([]);
         }
 
         $data_md5_print = md5(serialize($keyword_groups));
         $warning_msg = $warning_flag ? "Warning! We have analyzed only the first $max_analyzed_keywords Keywords." : '';
 
-        return json_encode( [ 'keyword_groups' => $keyword_groups, 'column_index' => $column_index, 'column_name' => $keyword_column_name, 'keyword_data_print' => $data_md5_print, 'warnings' => $warning_msg ] );
+        return json_encode(['keyword_groups' => $keyword_groups, 'column_index' => $column_index, 'column_name' => $keyword_column_name, 'keyword_data_print' => $data_md5_print, 'warnings' => $warning_msg]);
     }
 
     /**
@@ -1377,8 +1350,7 @@ class MyDataTable
     private function appendMetaData(JsonResponse $data)
     {
 
-        if (empty($this->meta_data) && empty($this->keyword_group_data))
-        {
+        if (empty($this->meta_data) && empty($this->keyword_group_data)) {
             return $data;
         }
 
@@ -1388,8 +1360,7 @@ class MyDataTable
 
         $temp_data = $data->getData();
 
-        if(!empty($this->meta_data))
-        {
+        if (!empty($this->meta_data)) {
             $temp_data->meta_data = $this->meta_data;
         }
 
@@ -1397,8 +1368,7 @@ class MyDataTable
         //------------     Adding Keyword Group data    ------------//
         //----------------------------------------------------------//
 
-        if (!empty($this->keyword_group_data))
-        {
+        if (!empty($this->keyword_group_data)) {
             $temp_data->keyword_group_data = $this->keyword_group_data;
             $temp_data->keyword_group_data_md5_print = $this->keyword_group_data_md5_print;
         }
@@ -1440,54 +1410,53 @@ class MyDataTable
     }
 
 
+    public function disableSearchingPagingOrderingAndInfo()
+    {
+        $this->datatable_js->disableSearchingPagingOrderingAndInfo();
 
-	public function disableSearchingPagingOrderingAndInfo()
-	{
-		$this->datatable_js->disableSearchingPagingOrderingAndInfo();
+        return $this;
+    }
 
-		return $this;
-	}
+    public function disableSearchingPagingAndInfo()
+    {
+        $this->datatable_js->disableSearchingPagingAndInfo();
 
-	public function disableSearchingPagingAndInfo()
-	{
-		$this->datatable_js->disableSearchingPagingAndInfo();
+        return $this;
+    }
 
-		return $this;
-	}
+    public function disableSearching()
+    {
+        $this->datatable_js->disableSearching();
 
-	public function disableSearching()
-	{
-		$this->datatable_js->disableSearching();
+        return $this;
+    }
 
-		return $this;
-	}
+    public function disablePaging()
+    {
+        $this->datatable_js->disablePaging();
 
-	public function disablePaging()
-	{
-		$this->datatable_js->disablePaging();
+        return $this;
+    }
 
-		return $this;
-	}
+    public function disableOrdering()
+    {
+        $this->datatable_js->disableOrdering();
 
-	public function disableOrdering()
-	{
-		$this->datatable_js->disableOrdering();
+        return $this;
+    }
 
-		return $this;
-	}
+    public function disableInfo()
+    {
+        $this->datatable_js->disableInfo();
 
-	public function disableInfo()
-	{
-		$this->datatable_js->disableInfo();
-
-		return $this;
-	}
+        return $this;
+    }
 
     public function enableCheckBoxLimit($limit = 10)
     {
         $this->drawtable->enableCheckBoxLimit($limit);
 
         return $this;
-	}
+    }
 
 }

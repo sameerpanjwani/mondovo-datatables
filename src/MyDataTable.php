@@ -34,17 +34,17 @@ class MyDataTable
 
     protected $builder;
 
-    protected $drawtable;
+	protected $drawtable;
 
-    protected $datatable;
+	protected $datatable;
 
-    protected $datatable_js;
+	protected $datatable_js;
 
-    protected $request;
+	protected $request;
 
-    protected $logo_path;
+	protected $logo_path;
 
-    /**
+	/**
      * @param DrawTableInterface $drawtable
      * @param DataTableFilterInterface $datatable
      * @param DataTableJsInterface $datatable_js
@@ -118,7 +118,7 @@ class MyDataTable
 
         list($head_rows, $rows) = $this->prepareExcelRows($response, $paying_user);
 
-        $excel = Excel::store( $file_name, function($excel) use ($file_name, $report_name, $report_date, $head_rows, $rows, $paying_user)
+        $excel = Excel::create( $file_name, function($excel) use ($file_name, $report_name, $report_date, $head_rows, $rows, $paying_user)
         {
             $sheet_name = (strlen($file_name) > 31) ? substr($file_name, 0, 29). ".." : $file_name;
             $excel->sheet($sheet_name, function($sheet) use ($report_name, $report_date, $head_rows, $rows, $paying_user)
@@ -270,7 +270,7 @@ class MyDataTable
                 $objDrawing->setWorksheet($sheet);
 
                 $sheet->getRowDimension('1')
-                    ->setRowHeight(70);
+                ->setRowHeight(70);
 
             });
         })->export($file_type);
@@ -310,7 +310,7 @@ class MyDataTable
 
 
     protected function getLogo(){
-        $logo_loc = config('mondovo-datatable.default_logo_url');
+	    $logo_loc = config('mondovo-datatable.default_logo_url');
         return $logo_loc;
     }
 
@@ -456,9 +456,9 @@ class MyDataTable
         return $this;
     }
 
-    public function disableCache() {
-        $this->datatable->disableCache();
-        return $this;
+	public function disableCache() {
+		$this->datatable->disableCache();
+		return $this;
     }
 
     /**
@@ -648,7 +648,7 @@ class MyDataTable
 
     /**
      * Column Name
-     */
+    */
     public function enableTextSelectorFilter($column_name)
     {
         $data_columns = $this->datatable_js->getDataColumns();
@@ -1443,53 +1443,53 @@ class MyDataTable
 
 
 
-    public function disableSearchingPagingOrderingAndInfo()
-    {
-        $this->datatable_js->disableSearchingPagingOrderingAndInfo();
+	public function disableSearchingPagingOrderingAndInfo()
+	{
+		$this->datatable_js->disableSearchingPagingOrderingAndInfo();
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function disableSearchingPagingAndInfo()
-    {
-        $this->datatable_js->disableSearchingPagingAndInfo();
+	public function disableSearchingPagingAndInfo()
+	{
+		$this->datatable_js->disableSearchingPagingAndInfo();
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function disableSearching()
-    {
-        $this->datatable_js->disableSearching();
+	public function disableSearching()
+	{
+		$this->datatable_js->disableSearching();
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function disablePaging()
-    {
-        $this->datatable_js->disablePaging();
+	public function disablePaging()
+	{
+		$this->datatable_js->disablePaging();
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function disableOrdering()
-    {
-        $this->datatable_js->disableOrdering();
+	public function disableOrdering()
+	{
+		$this->datatable_js->disableOrdering();
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function disableInfo()
-    {
-        $this->datatable_js->disableInfo();
+	public function disableInfo()
+	{
+		$this->datatable_js->disableInfo();
 
-        return $this;
-    }
+		return $this;
+	}
 
     public function enableCheckBoxLimit($limit = 10)
     {
         $this->drawtable->enableCheckBoxLimit($limit);
 
         return $this;
-    }
+	}
 
 }

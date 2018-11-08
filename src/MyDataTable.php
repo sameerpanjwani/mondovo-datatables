@@ -34,17 +34,17 @@ class MyDataTable
 
     protected $builder;
 
-	protected $drawtable;
+    protected $drawtable;
 
-	protected $datatable;
+    protected $datatable;
 
-	protected $datatable_js;
+    protected $datatable_js;
 
-	protected $request;
+    protected $request;
 
-	protected $logo_path;
+    protected $logo_path;
 
-	/**
+    /**
      * @param DrawTableInterface $drawtable
      * @param DataTableFilterInterface $datatable
      * @param DataTableJsInterface $datatable_js
@@ -245,18 +245,32 @@ class MyDataTable
 
                 $sheet->fromArray($rows, null, 'A' . $row_count, true, false);
 
-                $objDrawing = new PHPExcel_Worksheet_Drawing;
+
 
                 $logo_location = $this->getLogo();
 
-                $objDrawing->setPath($logo_location);
+                if($this->isExternalUrl($logo_location)){
+                    $image = $this->generateImage($logo_location);
+                    $objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+                    $objDrawing->setImageResource($image);
+                    $objDrawing->setRenderingFunction(
+                        PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG
+                    );
+                    $objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+
+                } else {
+                    $objDrawing = new PHPExcel_Worksheet_Drawing;
+                    $objDrawing->setPath($logo_location);
+                }
+
+
                 $objDrawing->setCoordinates('A1');
                 $objDrawing->setOffsetX(10);
                 $objDrawing->setOffsetY(20);
                 $objDrawing->setWorksheet($sheet);
 
                 $sheet->getRowDimension('1')
-                ->setRowHeight(70);
+                    ->setRowHeight(70);
 
             });
         })->export($file_type);
@@ -264,9 +278,39 @@ class MyDataTable
         return $excel;
     }
 
+    protected function isExternalUrl($logo_location){
+
+        if(strpos($logo_location,"http")===0){
+            return true;
+        }
+
+        return false;
+
+    }
+
+    protected function generateImage($logo_location){
+        $image_path_parts = explode(".",$logo_location);
+        $image_extension = $image_path_parts[count($image_path_parts)-1];
+        switch($image_extension){
+            case "gif":
+                $image = imagecreatefromgif($logo_location);
+                break;
+            case "png":
+                $image = imagecreatefrompng($logo_location);
+                break;
+            case "jpg" or "jpeg":
+                $image = imagecreatefromjpeg($logo_location);
+                break;
+            default:
+                throw new \Exception("Invalid Logo Image Extension. Needs to be .gif/.jpg/.jpeg/.png");
+                break;
+        }
+        return $image;
+    }
+
 
     protected function getLogo(){
-	    $logo_loc = config('mondovo-datatable.default_logo_url');
+        $logo_loc = config('mondovo-datatable.default_logo_url');
         return $logo_loc;
     }
 
@@ -412,9 +456,9 @@ class MyDataTable
         return $this;
     }
 
-	public function disableCache() {
-		$this->datatable->disableCache();
-		return $this;
+    public function disableCache() {
+        $this->datatable->disableCache();
+        return $this;
     }
 
     /**
@@ -604,7 +648,7 @@ class MyDataTable
 
     /**
      * Column Name
-    */
+     */
     public function enableTextSelectorFilter($column_name)
     {
         $data_columns = $this->datatable_js->getDataColumns();
@@ -1399,53 +1443,53 @@ class MyDataTable
 
 
 
-	public function disableSearchingPagingOrderingAndInfo()
-	{
-		$this->datatable_js->disableSearchingPagingOrderingAndInfo();
+    public function disableSearchingPagingOrderingAndInfo()
+    {
+        $this->datatable_js->disableSearchingPagingOrderingAndInfo();
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function disableSearchingPagingAndInfo()
-	{
-		$this->datatable_js->disableSearchingPagingAndInfo();
+    public function disableSearchingPagingAndInfo()
+    {
+        $this->datatable_js->disableSearchingPagingAndInfo();
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function disableSearching()
-	{
-		$this->datatable_js->disableSearching();
+    public function disableSearching()
+    {
+        $this->datatable_js->disableSearching();
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function disablePaging()
-	{
-		$this->datatable_js->disablePaging();
+    public function disablePaging()
+    {
+        $this->datatable_js->disablePaging();
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function disableOrdering()
-	{
-		$this->datatable_js->disableOrdering();
+    public function disableOrdering()
+    {
+        $this->datatable_js->disableOrdering();
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function disableInfo()
-	{
-		$this->datatable_js->disableInfo();
+    public function disableInfo()
+    {
+        $this->datatable_js->disableInfo();
 
-		return $this;
-	}
+        return $this;
+    }
 
     public function enableCheckBoxLimit($limit = 10)
     {
         $this->drawtable->enableCheckBoxLimit($limit);
 
         return $this;
-	}
+    }
 
 }

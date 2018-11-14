@@ -266,7 +266,7 @@ class MyDataTable
     protected function isExternalUrl($logo_location)
     {
 
-        if (strpos($logo_location, "http") === 0) {
+        if (strpos($logo_location, "excel-") === 0) {
             return true;
         }
 

@@ -17,5 +17,7 @@ return [
 	'demo_user' => false,
 	'access_level' => 1,
 	'manager_url' => '',
-	'kd_modal_url' => ''
+	'kd_modal_url' => '',
+	'logo_storage_disk' => 'local',
+	'local_storage_disk' => 'local'
 ];

@@ -240,7 +240,6 @@ class MyDataTable
 	            $logo_location = $this->getLogo();
 	            $disk_name = $this->getStorageDisk();
 
-	            $this->delete_logo = false;
 	            if (Storage::disk($disk_name)->exists($logo_location)) {
 		            $local_logo_location = $this->getLocalStorageDisk();
 		            $logo = Storage::disk($disk_name)->get($logo_location);
@@ -252,7 +251,10 @@ class MyDataTable
 		            $local_file_folder_path = \Storage::disk($local_logo_location)->getDriver()->getAdapter()->getPathPrefix();
 		            $this->delete_older_than($local_file_folder_path.$this->logo_sub_path, 60);
 		            $logo_location = $local_file_folder_path.$this->logo_sub_path."/".$file_name;
-		            $this->delete_logo = $logo_location;
+	            }else{
+	            	if(!file_exists($logo_location)){
+			            $logo_location = $this->getDefaultLogo();
+		            }
 	            }
 	            $objDrawing = new PHPExcel_Worksheet_Drawing;
 	            $objDrawing->setPath($logo_location);
@@ -336,6 +338,12 @@ class MyDataTable
 
 
     protected function getLogo()
+    {
+        $logo_loc = config('mondovo-datatable.user_logo_url');
+        return $logo_loc;
+    }
+
+    protected function getDefaultLogo()
     {
         $logo_loc = config('mondovo-datatable.default_logo_url');
         return $logo_loc;

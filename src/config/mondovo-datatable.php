@@ -14,6 +14,7 @@ return [
 	 */
 
 	'default_logo_url' => 'img/mondovo-logo.png',
+	'user_logo_url' => 'img/mondovo-logo.png',
 	'demo_user' => false,
 	'access_level' => 1,
 	'manager_url' => '',

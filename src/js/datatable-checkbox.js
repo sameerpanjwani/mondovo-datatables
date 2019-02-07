@@ -950,10 +950,10 @@ var MvDataTableCheckbox = function () {
         },
         disableFilter: function (table_id) {
             if (getTotalRecords(table_id) < 10) {
-                $("#" + table_id + " ." + MvDataTableFilterDesign.CssClassCollection.column_filter_container).attr('style','visibility:hidden !important');
+                $("#" + table_id + " ." + MvDataTableFilterDesign.CssClassCollection.column_filter_container).attr('style','display:none !important');
             }
             else {
-                $("#" + table_id + " ." + MvDataTableFilterDesign.CssClassCollection.column_filter_container).attr('style','visibility:visible !important');
+                $("#" + table_id + " ." + MvDataTableFilterDesign.CssClassCollection.column_filter_container).attr('style','display:table-cell !important');
             }
         },
         clearOrSelectAllRecords: function (table_id, status) {

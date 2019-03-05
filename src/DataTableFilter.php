@@ -49,25 +49,29 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
             $this->setDefaultOrderForEmptyResults();
         }
 
+        if($this->query_type == 'collection') {
+            $this->sortForCollection();
+        }
+
         return $this;
     }
 
-	protected function checkSpecialFilterOperatorsAvailable() {
-    	if(!$this->existsCustomFilter()){
-    		return false;
-	    }
-		$custom_filter = $this->getCustomFilter();
+    protected function checkSpecialFilterOperatorsAvailable() {
+        if(!$this->existsCustomFilter()){
+            return false;
+        }
+        $custom_filter = $this->getCustomFilter();
 
-		foreach ($custom_filter as $column_index => $operators) {
-			foreach ($operators as $operator) {
-				if ( $this->isSpecialFilterOperator( $operator ) ) {
-					$this->special_filter = true;
-					return true;
-				}
-			}
-		}
+        foreach ($custom_filter as $column_index => $operators) {
+            foreach ($operators as $operator) {
+                if ( $this->isSpecialFilterOperator( $operator ) ) {
+                    $this->special_filter = true;
+                    return true;
+                }
+            }
+        }
 
-		return true;
+        return true;
     }
 
     /**
@@ -103,8 +107,8 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
         return $this;
     }
 
-	public function disableCache() {
-		$this->disable_cache = true;
+    public function disableCache() {
+        $this->disable_cache = true;
     }
 
     /**
@@ -247,15 +251,49 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
         }
     }
 
+
+    public function sortForCollection()
+    {
+        if(isset($this->input['order'])) {
+            foreach ($this->input['order'] as $data) {
+                $column_name = $this->getColumnName($data['column']);
+                $order[$column_name] = $data['dir'];
+            }
+            /* So that Yajra should not proceed it with sorting*/
+            unset($this->input['order']);
+            $this->input['order'] = [];
+
+            $order = array_reverse($order);
+            $this->processCollectionSort($order);
+        }
+
+        return $this;
+    }
+
+    protected function processCollectionSort($order)
+    {
+        /*$this->collection = $this->collection->sortBy('global_search_volume');
+        $this->collection = $this->collection->sortByDesc('volume_research_search_volume');*/
+        foreach ($order as $column_name => $sort_type)
+        {
+            if($sort_type == 'desc') {
+                $this->collection = $this->collection->sortByDesc($column_name);
+            }else {
+                $this->collection = $this->collection->sortBy($column_name);
+            }
+        }
+        return $this;
+    }
+
     /**
      * @param $rawColumnsIndex
      * @return $this
      */
     public function setAllRawColumns($rawColumnsIndex)
     {
-	    if($this->disable_cache === false && $this->special_filter === false){
-		    return $this;
-	    }
+        if($this->disable_cache === false && $this->special_filter === false){
+            return $this;
+        }
         $rawColumnsIndex = $this->stringToArray($rawColumnsIndex);
         $columns = $this->columns;
 
@@ -293,7 +331,7 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
      *
      * What's happening Inside:
      * So in this function, if there is a raw column, then, single_quotes from that column's alias is removed.
-    */
+     */
     public function escapeRawColumnAlias($column_index_number)
     {
         $column_alias = $this->input['columns'][$column_index_number]['alias_name'];
@@ -556,13 +594,13 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
 
     protected function getAliasName($column_index)
     {
-    	try{
-		    return $this->input['columns'][$column_index]['alias_name'];
+        try{
+            return $this->input['columns'][$column_index]['alias_name'];
 
-	    }catch (\Exception $e){
-		    dd($this->input['columns'],$column_index);
+        }catch (\Exception $e){
+            dd($this->input['columns'],$column_index);
 
-	    }
+        }
     }
 
     protected function setRawColumnName($column_index, $column)
@@ -586,6 +624,11 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
         return $this->input['columns'][$column_index]['searchable'] == "true";
     }
 
+    protected function isSortable($column_index)
+    {
+        return $this->input['columns'][$column_index]['orderable'] != "false";
+    }
+
     protected function existsGlobalSearchValue()
     {
         return !empty($this->input['search']['value']);
@@ -594,6 +637,20 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
     protected function existsSearchValue($column_index)
     {
         return !empty($this->input['columns'][$column_index]['search']['value']);
+    }
+
+    protected function existsSortValue($column_index)
+    {
+        $exists = false;
+
+        foreach ($this->input['order'] as $sort){
+            if($sort['column'] == $column_index){
+                $exists = true;
+                break;
+            }
+        }
+
+        return $exists;
     }
 
     protected function enableSearchable($column_index)
@@ -1067,9 +1124,9 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
         }
 
         if(is_array($row)){
-	        $operand = $row[$this->getAliasName($column_index)];
+            $operand = $row[$this->getAliasName($column_index)];
         }else{
-	        $operand = $row->{$this->getAliasName($column_index)};
+            $operand = $row->{$this->getAliasName($column_index)};
         }
 
 
@@ -1253,7 +1310,7 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
          * Between Operator will be allowed only once. For same column, you can add only one Between Condition. Even if you add more, only first will prevail.
          * In the Below ForEach Loop: A between Operator is Dismantled appropriately to '>=' and '<=' conditions.
          *
-        */
+         */
         foreach ($operators as $operator => $search_results)
         {
             //If the operator is Between
@@ -1414,8 +1471,8 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
                         }
                         $this->query->join('keyword_tags_for_campaign AS ktc', 'ktc.keyword_id', '=', $query_column_name)
                             ->join('tags_by_campaign AS tbc', function ($join){
-                            $join->on('tbc.tag_campaign_id', '=', 'ktc.tag_campaign_id')
-                                ->on('tbc.campaign_id', '=', 'kfcs.campaign_id');
+                                $join->on('tbc.tag_campaign_id', '=', 'ktc.tag_campaign_id')
+                                    ->on('tbc.campaign_id', '=', 'kfcs.campaign_id');
                             })
                             ->groupBy('k.keyword_id');
                     } else if ($source_type == 3) {
@@ -1519,12 +1576,12 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
 
         if(!empty($data))
         {
-	        $data_first_row = objectToArray($data[0]);
-	        $keys = array_keys($data_first_row);
+            $data_first_row = objectToArray($data[0]);
+            $keys = array_keys($data_first_row);
             $key = $keys[$column_index];
             foreach ($data as $values)
             {
-	            $values_to_be_filtered[] = $values->{$key};
+                $values_to_be_filtered[] = $values->{$key};
             }
         }
 

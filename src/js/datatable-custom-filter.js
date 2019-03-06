@@ -64,12 +64,12 @@ var MvDataTableFilterDesign = {
             '<button type="button" class="column_filter_btn dropdown-toggle  selectpicker green" data-toggle="dropdown" title="FilterBy">' +
             '<i class="fa fa-filter"></i>' +
             '</button>' +
-            '<ul class="column_filter_condition dropdown-menu" role="menu">' +
+            '<ul class="column_filter_condition dropdown-menu dropdown-menu-right" role="menu">' +
             '<li></li>' +
             '<li></li>' +
             '<li>' +
-            '<button type="button" class="filter_now btn blue btn-med" tableId="' + tableId + '" id="' + tableId + '_filter_now_' + column_index +'">Filter</button>' +
             '<button type="button" class="close_filter btn default btn-med">Close</button>' +
+            '<button type="button" class="filter_now btn blue btn-med" tableId="' + tableId + '" id="' + tableId + '_filter_now_' + column_index +'">Filter</button>' +
             '</li>' +
             '</ul>' +
             '<div class="clearfix"></div>' +
@@ -105,98 +105,98 @@ var MvDataTableFilterDesign = {
     },
     ContainsMultipleModal: function(table_id, column_index){
         var refId = table_id + "FilterTextArea" + column_index;
-        return '<div id="contains_multiple_modal_for_' + refId + '" data-keyboard="true" class="modal fade in" aria-hidden="true">' +
-                    '<div class="modal-dialog modal-lg">' +
-                        '<div class="modal-content">' +
-                            '<div class="modal-header">' +
-                                '<button aria-hidden="true" data-dismiss="modal" class="close contains-multiple-close" type="button" id="close_button" table-id="' +table_id + '" column-index="' + column_index + '"></button>' +
-                                '<h4 class="modal-title">Contains Multiple</h4>' +
-                            '</div>' +
-                            '<div class="modal-body nopadding">' +
-                                '<div class="form">' +
-                                    '<div class="form_content"> <div class="form-horizontal form-bordered">' +
-                                        '<div class="form-group form-md-line-input" style="padding-bottom: 0px !important;">' +
-                                            '<div class="control-label col-xs-12 col-sm-4 col-md-4 col-lg-3">' +
-                                                '<label for="select_tags">Enter Keywords:<div style="font-size:11px;text-align:center;">(one keyword/phrase per line)</div></label>' +
-                                            '</div>' +
-                                            '<div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">' +
-                                                '<div class="input-xlarge input-inline">' +
-                                                    '<textarea id="' + refId + '"  class="form-control operand_text mx_dt_text_area"></textarea>' +
-                                                '</div>' +
-                                                '<div class="input-xlarge" style="margin-top: 5px;">' +
-                                                    '<span class="pull-right">' +
-                                                        '<a data-toggle="modal" href="#" class="btn mini add-from-manager" data-type="keywords" data-manager-type="tag-pages" data-source-selector="' + refId + '" data-max-attr-allowed="5000"><i class="fa fa-bitbucket"></i> Import Keywords </a>' +
-                                                    '</span>' +
-                                                '</div>' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="form-group form-md-line-input" style="padding-top: 5px !important;">' +
-                                            '<div class="control-label col-xs-12 col-sm-4 col-md-4 col-lg-3">' +
-                                                '<label for="select_tags">Contains:</label>' +
-                                            '</div>' +
-                                            '<div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">' +
-                                                '<div class="md-radio-inline">' +
-                                                    '<div class="md-radio">' +
-                                                        '<input name="' + refId + '_radio" type="radio" id="' + refId + '_radio_any_one" value="any" checked="checked" radio_text="Any One"><label for="' + refId + '_radio_any_one"><span class="inc"></span><span class="check"></span><span class="box"></span>Any One</label>' +
-                                                    '</div>' +
-                                                    '<div class="md-radio">' +
-                                                        '<input name="' + refId + '_radio" type="radio" id="' + refId + '_radio_all" value="all" radio_text="All"><label for="' + refId + '_radio_all"><span class="inc"></span><span class="check"></span><span class="box"></span>All</label>' +
-                                                    '</div>' +
-                                                '</div>' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="form-actions clearfix">' +
-                                            '<div class="col-md-offset-3 col-md-9 col-lg-offset-3 col-lg-9 margin-bottom-20">' +
-                                                '<button type="button" data-dismiss="modal" class="filter_now_from_contains_modal btn blue btn-med" table-id="' +table_id + '" column-index="' + column_index + '">Filter</button>' +
-                                                '<button type="button" data-dismiss="modal" class="btn default btn-med contains-multiple-close" table-id="' +table_id + '" column-index="' + column_index + '">Close</button>' +
-                                            '</div>' +
-                                        '</div>' +
-                                    '</div></div>' +
-                                '</div>' +
-                            '</div>'
-                        '</div>' +
-                    '</div>' +
-                '</div>';
+        return '<div id="contains_multiple_modal_for_' + refId + '" data-keyboard="true" class="modal fade in new-modal-styles" aria-hidden="true">' +
+            '<div class="modal-dialog modal-lg width-70">' +
+            '<div class="modal-content">' +
+            '<div class="modal-header">' +
+            '<button aria-hidden="true" data-dismiss="modal" class="close contains-multiple-close" type="button" id="close_button" table-id="' +table_id + '" column-index="' + column_index + '"></button>' +
+            '<h4 class="modal-title">Contains Multiple</h4>' +
+            '</div>' +
+            '<div class="modal-body nopadding">' +
+            '<div class="form">' +
+            '<div class="form_content"> <div class="form-horizontal form-bordered">' +
+            '<div class="form-group form-md-line-input" style="padding-bottom: 0px !important;">' +
+            '<div class="control-label col-xs-12 col-sm-4 col-md-4 col-lg-3">' +
+            '<label for="select_tags">Enter Keywords:<div style="font-size:11px;text-align:center;">(one keyword/phrase per line)</div></label>' +
+            '</div>' +
+            '<div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">' +
+            '<div class="input-xlarge input-inline">' +
+            '<textarea id="' + refId + '"  class="'+table_id+' form-control operand_text mx_dt_text_area"></textarea>' +
+            '</div>' +
+            '<div class="input-xlarge" style="margin-top: 5px;">' +
+            '<span class="pull-right">' +
+            '<a data-toggle="modal" href="#" class="btn mini add-from-manager" data-type="keywords" data-manager-type="tag-pages" data-source-selector="' + refId + '" data-max-attr-allowed="5000"><i class="fa fa-bitbucket"></i> Import Keywords </a>' +
+            '</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="form-group form-md-line-input" style="padding-top: 5px !important;">' +
+            '<div class="control-label col-xs-12 col-sm-4 col-md-4 col-lg-3">' +
+            '<label for="select_tags">Contains:</label>' +
+            '</div>' +
+            '<div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">' +
+            '<div class="md-radio-inline">' +
+            '<div class="md-radio">' +
+            '<input name="' + refId + '_radio" type="radio" id="' + refId + '_radio_any_one" value="any" checked="checked" radio_text="Any One"><label for="' + refId + '_radio_any_one"><span class="inc"></span><span class="check"></span><span class="box"></span>Any One</label>' +
+            '</div>' +
+            '<div class="md-radio">' +
+            '<input name="' + refId + '_radio" type="radio" id="' + refId + '_radio_all" value="all" radio_text="All"><label for="' + refId + '_radio_all"><span class="inc"></span><span class="check"></span><span class="box"></span>All</label>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="form-actions clearfix">' +
+            '<div class="col-md-offset-3 col-md-9 col-lg-offset-3 col-lg-9 margin-bottom-20">' +
+            '<button type="button" data-dismiss="modal" class="filter_now_from_contains_modal btn blue btn-med" table-id="' +table_id + '" column-index="' + column_index + '">Filter</button>' +
+            '<button type="button" data-dismiss="modal" class="btn default btn-med contains-multiple-close" table-id="' +table_id + '" column-index="' + column_index + '">Close</button>' +
+            '</div>' +
+            '</div>' +
+            '</div></div>' +
+            '</div>' +
+            '</div>'
+        '</div>' +
+        '</div>' +
+        '</div>';
     },
     DoesNotContainsMultipleModal: function(table_id, column_index){
         var refId = table_id + "FilterTextArea" + column_index;
-        return '<div id="does_not_contain_multiple_modal_for_' + refId + '" data-keyboard="true" class="modal fade in" aria-hidden="true">' +
-                    '<div class="modal-dialog modal-lg">' +
-                        '<div class="modal-content">' +
-                            '<div class="modal-header">' +
-                                '<button aria-hidden="true" data-dismiss="modal" class="close contains-multiple-close" type="button" id="close_button" table-id="' +table_id + '" column-index="' + column_index + '"></button>' +
-                                '<h4 class="modal-title">Does Not Contains Multiple</h4>' +
-                            '</div>' +
-                            '<div class="modal-body nopadding">' +
-                                '<div class="form">' +
-                                    '<div class="form_content"> <div class="form-horizontal form-bordered">' +
-                                        '<div class="form-group form-md-line-input" style="padding-bottom: 0px !important;">' +
-                                            '<div class="control-label col-xs-12 col-sm-4 col-md-4 col-lg-3">' +
-                                                '<label for="select_tags">Enter Keywords:<div style="font-size:11px;text-align:center;">(one keyword/phrase per line)</div></label>' +
-                                            '</div>' +
-                                            '<div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">' +
-                                                '<div class="input-xlarge input-inline">' +
-                                                    '<textarea id="' + refId + '_does_not"  class="form-control operand_text mx_dt_text_area"></textarea>' +
-                                                '</div>' +
-                                                '<div class="input-xlarge" style="margin-top: 5px;">' +
-                                                    '<span class="pull-right">' +
-                                                        '<a data-toggle="modal" href="#" class="btn mini add-from-manager" data-type="keywords" data-manager-type="tag-pages" data-source-selector="' + refId + '_does_not" data-max-attr-allowed="5000"><i class="fa fa-bitbucket"></i> Import Keywords </a>' +
-                                                    '</span>' +
-                                                '</div>' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="form-actions clearfix">' +
-                                            '<div class="col-md-offset-3 col-md-9 col-lg-offset-3 col-lg-9 margin-bottom-20">' +
-                                                '<button type="button" data-dismiss="modal" class="filter_now_from_contains_modal btn blue btn-med" table-id="' +table_id + '" column-index="' + column_index + '">Filter</button>' +
-                                                '<button type="button" data-dismiss="modal" class="btn default btn-med contains-multiple-close" table-id="' +table_id + '" column-index="' + column_index + '">Close</button>' +
-                                            '</div>' +
-                                        '</div>' +
-                                    '</div></div>' +
-                                '</div>' +
-                            '</div>'
-                        '</div>' +
-                    '</div>' +
-                '</div>';
+        return '<div id="does_not_contain_multiple_modal_for_' + refId + '" data-keyboard="true" class="modal fade in new-modal-styles" aria-hidden="true">' +
+            '<div class="modal-dialog modal-lg width-70">' +
+            '<div class="modal-content">' +
+            '<div class="modal-header">' +
+            '<button aria-hidden="true" data-dismiss="modal" class="close contains-multiple-close" type="button" id="close_button" table-id="' +table_id + '" column-index="' + column_index + '"></button>' +
+            '<h4 class="modal-title">Does Not Contains Multiple</h4>' +
+            '</div>' +
+            '<div class="modal-body nopadding">' +
+            '<div class="form">' +
+            '<div class="form_content"> <div class="form-horizontal form-bordered">' +
+            '<div class="form-group form-md-line-input" style="padding-bottom: 0px !important;">' +
+            '<div class="control-label col-xs-12 col-sm-4 col-md-4 col-lg-3">' +
+            '<label for="select_tags">Enter Keywords:<div style="font-size:11px;text-align:center;">(one keyword/phrase per line)</div></label>' +
+            '</div>' +
+            '<div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">' +
+            '<div class="input-xlarge input-inline">' +
+            '<textarea id="' + refId + '_does_not"  class="'+table_id+' form-control operand_text mx_dt_text_area"></textarea>' +
+            '</div>' +
+            '<div class="input-xlarge" style="margin-top: 5px;">' +
+            '<span class="pull-right">' +
+            '<a data-toggle="modal" href="#" class="btn mini add-from-manager" data-type="keywords" data-manager-type="tag-pages" data-source-selector="' + refId + '_does_not" data-max-attr-allowed="5000"><i class="fa fa-bitbucket"></i> Import Keywords </a>' +
+            '</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="form-actions clearfix">' +
+            '<div class="col-md-offset-3 col-md-9 col-lg-offset-3 col-lg-9 margin-bottom-20">' +
+            '<button type="button" data-dismiss="modal" class="filter_now_from_contains_modal btn blue btn-med" table-id="' +table_id + '" column-index="' + column_index + '">Filter</button>' +
+            '<button type="button" data-dismiss="modal" class="btn default btn-med contains-multiple-close" table-id="' +table_id + '" column-index="' + column_index + '">Close</button>' +
+            '</div>' +
+            '</div>' +
+            '</div></div>' +
+            '</div>' +
+            '</div>'
+        '</div>' +
+        '</div>' +
+        '</div>';
     },
     TextFieldForNumber: function (refId, select2_id, tableId, column_index) {
         return '<input type="text" id="' + refId + '_1"  class="form-control operand_text" >' +
@@ -216,14 +216,14 @@ var MvDataTableFilterDesign = {
         else
         {
             return '<li class = "and_column_input' + column_index + operator_index_value + '">' +
-                        '<span>' +
-                            '<label class="column_title">' + uc_words(filter_clear_id.split('_').join(' ')) + '</label> &nbsp; ' +
-                        '</span>' +
-                        '<a class="clear_filter"' +
-                        'table_id="' + table_id + '" column_index="' + column_index + '" data-filter-clear-id="' + filter_clear_id + '" operator_value="' + column_operator + '"  operator_index_value="' + operator_index_value + '" >' +
-                            '<i class="fa fa-times"></i>' +
-                        '</a>' +
-                    '</li>';
+                '<span>' +
+                '<label class="column_title">' + uc_words(filter_clear_id.split('_').join(' ')) + '</label> &nbsp; ' +
+                '</span>' +
+                '<a class="clear_filter"' +
+                'table_id="' + table_id + '" column_index="' + column_index + '" data-filter-clear-id="' + filter_clear_id + '" operator_value="' + column_operator + '"  operator_index_value="' + operator_index_value + '" >' +
+                '<i class="fa fa-times"></i>' +
+                '</a>' +
+                '</li>';
         }
 
         var temp_column_operator = column_operator;
@@ -241,9 +241,9 @@ var MvDataTableFilterDesign = {
         }
 
         var close = '<a class="clear_filter"' +
-                'table_id="' + table_id + '" column_index="' + column_index + '" data-filter-clear-id="' + filter_clear_id + '" operator_value="' + column_operator + '"  operator_index_value="' + operator_index_value + '" >' +
-                '<i class="fa fa-times"></i>' +
-                '</a>';
+            'table_id="' + table_id + '" column_index="' + column_index + '" data-filter-clear-id="' + filter_clear_id + '" operator_value="' + column_operator + '"  operator_index_value="' + operator_index_value + '" >' +
+            '<i class="fa fa-times"></i>' +
+            '</a>';
 
         var column_operator_html = (temp_column_operator == '') ? '' : '<label class="column_operator">' + temp_column_operator + '</label> &nbsp; ';
         return '<li class = "and_column_input' + column_index + operator_index_value + '">' +
@@ -264,11 +264,11 @@ var MvDataTableFilter = function () {
     var css_class = MvDataTableFilterDesign.CssClassCollection;
 
     var DataTableFilterSettings = {
-        text: ["=", "Not Equals", "Contains", "Does not contain", "Contains (multiple)", "Does not contain (multiple)", "Starts With", "Ends With", "Is Blank", "Is Not Blank"],
+        text: ["=", "Not Equals", "Contains", "Does not contain", "Contains (multiple)", "Does not contain (multiple)", "Starts With", "Ends With", "Is Empty", "Is Not Empty"],
         select: ["=", "Not Equals"],
         filter: ['In Tags', 'In Keywords', 'In Pages', 'Is of', 'Not In Tags', 'Not In Keywords', 'Not In Pages'],
-        number: ['=', "Not Equals", "&lt;", "&gt;", "&lt;=", "&gt;=", "Between", "Is Blank", "Is Not Blank"],
-        all: ["=", "Not Equals", "Contains", "Does not contain", "&lt;", "&gt;", "&lt;=", "&gt;=", "Is Blank", "Is Not Blank"]
+        number: ['=', "Not Equals", "&lt;", "&gt;", "&lt;=", "&gt;=", "Between", "Is Empty", "Is Not Empty"],
+        all: ["=", "Not Equals", "Contains", "Does not contain", "&lt;", "&gt;", "&lt;=", "&gt;=", "Is Empty", "Is Not Empty"]
     };
 
     var specialOperatorForFilter = {
@@ -357,6 +357,7 @@ var MvDataTableFilter = function () {
             success: function (response) {
                 this.mySuccess();
                 $('body').append(response.text);
+
                 callback();
             },
             type: 'GET',
@@ -505,39 +506,44 @@ var MvDataTableFilter = function () {
 
     var addFilterType = function (self, tableId, filter_type, column_index) {
 
-        var domObj = $(self).find("." + css_class.column_filter_condition).children();
+        try {
 
-        switch (filter_type) {
+            var domObj = $(self).find("." + css_class.column_filter_condition).children();
 
-            case 'text':
-                domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.text, tableId, column_index));
-                domObj.eq(1).html(MvDataTableFilterDesign.TextField(tableId + "FilterText" + column_index));
-                $("body").append(MvDataTableFilterDesign.ContainsMultipleModal(tableId, column_index));
-                $("body").append(MvDataTableFilterDesign.DoesNotContainsMultipleModal(tableId, column_index));
-                break;
+            switch (filter_type) {
 
-            case 'number':
-                domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.number));
-                domObj.eq(1).html(MvDataTableFilterDesign.TextFieldForNumber(tableId + "FilterNumber" + column_index, tableId + "Operator" + column_index, tableId, column_index));
-                break;
+                case 'text':
+                    domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.text, tableId, column_index));
+                    domObj.eq(1).html(MvDataTableFilterDesign.TextField(tableId + "FilterText" + column_index));
+                    $("body").append(MvDataTableFilterDesign.ContainsMultipleModal(tableId, column_index));
+                    $("body").append(MvDataTableFilterDesign.DoesNotContainsMultipleModal(tableId, column_index));
+                    break;
 
-            case 'select':
-                var select_id = checkSelectId(self);
-                if (!select_id) {
-                    return false;
-                }
-                domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.select));
-                domObj.eq(1).html(MvDataTableFilterDesign.SecondDropDown(tableId + "FilterSelect" + column_index, select_id));
-                break;
-            case 'date':
-                domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.all));
-                var refId = tableId + "FilterDateTime" + column_index;
-                domObj.eq(1).html(MvDataTableFilterDesign.TextField(refId));
-                $('#' + refId).datepicker({autoclose: true, container: domObj.eq(1)});
-                break;
-            default:
-                domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.all));
-                domObj.eq(1).html(MvDataTableFilterDesign.TextField(tableId + "FilterText" + column_index));
+                case 'number':
+                    domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.number));
+                    domObj.eq(1).html(MvDataTableFilterDesign.TextFieldForNumber(tableId + "FilterNumber" + column_index, tableId + "Operator" + column_index, tableId, column_index));
+                    break;
+
+                case 'select':
+                    var select_id = checkSelectId(self);
+                    if (!select_id) {
+                        return false;
+                    }
+                    domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.select));
+                    domObj.eq(1).html(MvDataTableFilterDesign.SecondDropDown(tableId + "FilterSelect" + column_index, select_id));
+                    break;
+                case 'date':
+                    domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.all));
+                    var refId = tableId + "FilterDateTime" + column_index;
+                    domObj.eq(1).html(MvDataTableFilterDesign.TextField(refId));
+                    $('#' + refId).datepicker({autoclose: true, container: domObj.eq(1)});
+                    break;
+                default:
+                    domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.all));
+                    domObj.eq(1).html(MvDataTableFilterDesign.TextField(tableId + "FilterText" + column_index));
+            }
+        }catch (e) {
+            console.log(self, tableId, filter_type, column_index, e);
         }
     };
 
@@ -1162,7 +1168,7 @@ var MvDataTableFilter = function () {
             }
             var charlist = ',';
             charlist = !charlist ? ' \\s\u00A0' : (charlist + '')
-                    .replace(/([[\]().?/*{}+$^:])/g, '\\$1');
+                .replace(/([[\]().?/*{}+$^:])/g, '\\$1');
             var re = new RegExp('[' + charlist + ']+$', 'g');
             records_details_str = (records_details_str + '').replace(re, '');
 
@@ -1365,7 +1371,7 @@ var MvDataTableFilter = function () {
         $('.' + css_class.operator_select).off('click');
         $('.' + css_class.operator_select).change(function () {
             var option = $(this).find('option:selected').text();
-            if (option == 'Is Blank' || option == 'Is Not Blank') {
+            if (option == 'Is Empty' || option == 'Is Not Empty') {
                 $(this).parent().next().hide();
             } else if(option == 'Contains (multiple)' || option == 'Does not contain (multiple)') {
 
@@ -1534,8 +1540,18 @@ var MvDataTableFilter = function () {
             var table_id = $(this).attr('table_id');
             if (filter_length == 1) {
                 $("#" + table_id + "_filter").hide();
+                $('.'+table_id+'.mx_dt_text_area').val('');
             }
             closeDatatableFilterTag(this);
+            //Added by lohith for removing text selector filter.
+            //Functions available in text-selector-filter.js
+            if(typeof TextSelectorFilter.clear.include === 'function'){
+                TextSelectorFilter.clear.include();
+            }
+
+            if(typeof TextSelectorFilter.clear.exclude === 'function'){
+                TextSelectorFilter.clear.exclude();
+            }
 
             if( typeof post_filter_clear_callback[table_id] !== 'undefined')
             {
@@ -1548,7 +1564,18 @@ var MvDataTableFilter = function () {
             var self = this;
             bootbox.confirm(MvDataTableFilterDesign.filterConditionMsg, function (result) {
                 if (result) {
+                    //Added by lohith for removing text selector filter.
+                    //Functions available in text-selector-filter.js
+                    if(typeof TextSelectorFilter.clear.include === 'function'){
+                        TextSelectorFilter.clear.include();
+                    }
+
+                    if(typeof TextSelectorFilter.clear.exclude === 'function'){
+                        TextSelectorFilter.clear.exclude();
+                    }
+
                     var table_id = $(self).attr('tableId');
+                    $('.'+table_id+'.mx_dt_text_area').val('');
                     datatableFilterClear(table_id);
 
                     if( typeof post_filter_clear_callback[table_id] !== 'undefined')
@@ -1778,6 +1805,7 @@ var MvDataTableFilter = function () {
                     if(col_name == "" || typeof col_name == "undefined")
                         col_name = ($(this).find("span").html() == undefined) ? $(this).html() : $(this).find("span").html();
 
+                    col_name = col_name.replace(/(<([^>]+)>)/ig,"");
                     col_ar.push({'col_name': col_name, 'rowspan': rowspan, 'colspan': colspan});
                 }
 
@@ -2622,7 +2650,7 @@ var MvDataTableFilter = function () {
         if (concat_columns_attr.length > 0) {
             concat_columns = concat_columns_attr.join('_') + '_' + concat_separator;
         }
-        if (operator_value == "Is Blank" || operator_value == "Is Not Blank") {
+        if (operator_value == "Is Empty" || operator_value == "Is Not Empty") {
             column_value = '';
         }
 
@@ -2631,7 +2659,7 @@ var MvDataTableFilter = function () {
             /* First time with this operator */
             $("#" + table_id + "_filter ." + css_class.filter_conditions_container).append(MvDataTableFilterDesign.AndField(column_title, operator_value, column_value, column_index, table_id, operator_index_value, data_filter_id, all_values));
         }
-        else if (operator_value != "Is Blank" && operator_value != "Is Not Blank") {
+        else if (operator_value != "Is Empty" && operator_value != "Is Not Empty") {
             var filter_condition_ref = $("#" + table_id + "_filter ." + css_class.filter_conditions_container + " ." + css_class.and_column_input + column_index + operator_index_value);
 
             var data = $.trim(filter_condition_ref.find("." + css_class.and_column_value).html());
@@ -2785,9 +2813,9 @@ var MvDataTableFilter = function () {
                 return operand.toLowerCase().indexOf(search_value.toLowerCase()) >= 0;
             case "Does not contain" :
                 return operand.toLowerCase().indexOf(search_value.toLowerCase()) < 0;
-            case "Is Blank"         :
+            case "Is Empty"         :
                 return operand === '';
-            case "Is Not Blank"     :
+            case "Is Not Empty"     :
                 return operand !== '';
         }
 
@@ -2825,9 +2853,9 @@ var MvDataTableFilter = function () {
                 return '__contains__';
             case "Does not contain" :
                 return '__does__not__contain__';
-            case "Is Blank"         :
+            case "Is Empty"         :
                 return '__is__empty__';
-            case "Is Not Blank"     :
+            case "Is Not Empty"     :
                 return '__is__not__empty__';
             case '<'             :
                 return '__lt__';
@@ -3026,7 +3054,7 @@ var MvDataTableFilter = function () {
             registerEvents();
             ajaxCallManagers();
             getKeywordDifficultyModal();
-        }, 
+        },
         registerSubEvents: function () {
             registerSubEvents();
         },
@@ -3294,12 +3322,12 @@ function choose_column(element, view_or_all) {
 
     var out_side_closure = $('<div>').append( $('<div>').attr({'class': 'col-md-6'}).append('Please select a column <br>').append(select) );
     var extra_options_html = '<div class="col-md-6 copy-type-chooser"> ' +
-                                'Choose Which data to copy: ' +
-                                '<label for="copy_radio_all" > All </lable> ' +
-                                '<input type="radio" name="column_copy_radio" id="copy_radio_all" checked="checked" value="all"> ' +
-                                '<label for="copy_radio_view" style="margin-left: 7px;"> In View </lable> ' +
-                                '<input type="radio" name="column_copy_radio" id="copy_radio_view" checked="" value="view"> ' +
-                             '</div>';
+        'Choose Which data to copy: ' +
+        '<label for="copy_radio_all" > All </lable> ' +
+        '<input type="radio" name="column_copy_radio" id="copy_radio_all" checked="checked" value="all"> ' +
+        '<label for="copy_radio_view" style="margin-left: 7px;"> In View </lable> ' +
+        '<input type="radio" name="column_copy_radio" id="copy_radio_view" checked="" value="view"> ' +
+        '</div>';
 
     out_side_closure.append(extra_options_html);
     //out_side_closure.a
@@ -3382,18 +3410,18 @@ function copy_table_column_data_all(table_id, column_number) {
         data: post_data,
         beforeSend: function () {
             warning_boot_box =
-            bootbox.dialog({
-                title: "Please wait",
-                message: '<div class="col-md-12 time-warning-content" style="text-align: center;"> Please wait Until we fetch the complete data. <br><br> <i class="fa fa-spinner fa-3 fa-spin"></i></div>',
-                buttons: {
-                    success: {
-                        label: '<i class="fa fa-check"></i> Ok',
-                        className: 'btn mon-btn-blue'
+                bootbox.dialog({
+                    title: "Please wait",
+                    message: '<div class="col-md-12 time-warning-content" style="text-align: center;"> Please wait Until we fetch the complete data. <br><br> <i class="fa fa-spinner fa-3 fa-spin"></i></div>',
+                    buttons: {
+                        success: {
+                            label: '<i class="fa fa-check"></i> Ok',
+                            className: 'btn mon-btn-blue'
+                        }
+                    },
+                    callback: function (result) {
                     }
-                },
-                callback: function (result) {
-                }
-            });
+                });
         },
         success: function (column_values_array) {
 

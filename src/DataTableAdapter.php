@@ -75,7 +75,7 @@ class DataTableAdapter implements DataTableAdapterInterface {
 		    	$builder = \Cache::get($cache_key);
 		    }else{
 			    $builder = $builder->get();
-			    \Cache::put($cache_key, $builder, 240);
+			    set_cache($cache_key, $builder, 240);
 		    }
 	    }
 

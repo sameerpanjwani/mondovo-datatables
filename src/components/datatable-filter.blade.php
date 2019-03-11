@@ -30,7 +30,7 @@
                                @if(!empty($filters['filter_id']))
                                data-filter-id="{{$filters['filter_id']}}"
                                @endif
-                            >{{$filters['filter_title']}}</a>
+                            >{!! $filters['filter_title'] !!}</a>
 
                         </li>
                     @else
@@ -42,7 +42,7 @@
                         data-filter-id="{{$filters['filter_id']}}"
                         @endif
                             >
-                        <a href="javascript:void(0)">{{$filters['filter_title']}}</a></li>
+                        <a href="javascript:void(0)">{!! $filters['filter_title'] !!}</a></li>
                     @endif
                 @endforeach
             </ul>

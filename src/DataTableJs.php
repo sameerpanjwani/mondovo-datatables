@@ -112,9 +112,9 @@ class DataTableJs implements DataTableJsInterface
     protected $table_info = false;
 
     protected $searching = 'true';
-	protected $paging = 'true';
-	protected $ordering = 'true';
-	protected $info = 'true';
+    protected $paging = 'true';
+    protected $ordering = 'true';
+    protected $info = 'true';
 
     function __construct(DataTableFilterInterface $datatable)
     {
@@ -329,10 +329,10 @@ class DataTableJs implements DataTableJsInterface
         $manager_url = '';
         $kd_modal_url = '';
         if(!empty(config('mondovo-datatable.manager_url'))){
-	        $manager_url = route(config('mondovo-datatable.manager_url'));
+            $manager_url = route(config('mondovo-datatable.manager_url'));
         }
         if(!empty(config('mondovo-datatable.kd_modal_url'))){
-	        $kd_modal_url = route(config('mondovo-datatable.kd_modal_url'));
+            $kd_modal_url = route(config('mondovo-datatable.kd_modal_url'));
         }
 
         $js_variables = ['table_id' => $table_id, 'ajax_url' => $this->getAjaxUrl(), 'page_length' => $this->getPageLength(), 'js_columns' => json_encode($this->jsColumns), 'js_order' => json_encode($this->jsOrder), 'checkbox_columns' => json_encode($this->checkbox_columns), 'checkbox_control_text' => $this->checkbox_controls_html_string, 'datatable_js_objects' => $this->datatable_js_objects, 'datatable_fixed_columns_objects' => $this->datatable_fixed_columns_objects, 'ajax_callback_function' => $this->ajax_callback_function, 'ajax_success_callback_function' => $this->ajax_success_callback_function, 'pre_draw_callback_function' => $this->pre_draw_callback_function, 'keyword_manager_column' => ($keyword_manager_column > 0) ? $keyword_manager_column : -1, 'tag_manager_column' => ($tag_manager_column > 0) ? $tag_manager_column : -1, 'page_manager_column' => ($page_manager_column > 0) ? $page_manager_column : -1, 'manager_url' => $manager_url,'ajax_request'=>$ajax_request,'hide_default_columns'=>$hide_default_columns,'pdf_view'=>$pdf_view,'data_rows'=>$data_rows, 'custom_empty_table_message' => $this->getCustomEmptyTableMessage(), 'auto_width' => $this->auto_width, 'loading_on_scroll' => $this->loading_on_scroll, 'scroll_y' => $this->scroll_y, 'enable_kd' => ($enable_kd > 0) ? $enable_kd : -1, 'kd_modal_url' => $kd_modal_url, 'text_selector_filter' => $this->text_selector_filter, 'table_info' => $this->table_info, 'searching' => $this->searching, 'paging' => $this->paging, 'ordering' => $this->ordering, 'info' => $this->info ];
@@ -451,8 +451,8 @@ class DataTableJs implements DataTableJsInterface
     {
 
         foreach($this->tag_manager_column as $key=>$tag_column) {
-                $html_string = ' <a class="icon-btn btn blue add-to-tag-manager" data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $tag_column . '" data-column-type="' . $this->tag_manager_column_type[$key] . '" ><i class="fa fa-plus"></i> <div>' . trans($this->language_path . '.assign') . ' ' . trans($this->language_path . '.tags_info') . ' ' . $this->tag_manager_button_text[$key] . '</div></a>';
-                $this->addToCheckboxControls($html_string);
+            $html_string = ' <a class="icon-btn btn blue add-to-tag-manager" data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $tag_column . '" data-column-type="' . $this->tag_manager_column_type[$key] . '" ><i class="fa fa-plus"></i> <div>' . trans($this->language_path . '.assign') . ' ' . trans($this->language_path . '.tags_info') . ' ' . $this->tag_manager_button_text[$key] . '</div></a>';
+            $this->addToCheckboxControls($html_string);
         }
 
         foreach ($this->keyword_manager_column as $key => $keyword_column) {
@@ -482,8 +482,8 @@ class DataTableJs implements DataTableJsInterface
 
             $callback = isset($this->copy_to_clipboard_column_callback[$key]) ? 'callback="'. $this->copy_to_clipboard_column_callback[$key] .'"' : '';
 
-                $html_string = ' <a class="icon-btn btn blue copy-to-clipboard" ' . $callback . ' data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $copy_column . '"><i class="fa fa-copy"></i> <div style="width:112px; height:28px; white-space: pre-line;"><i class="copy-loading fa fa-spinner fa-spin" style="font-size: 14px; color: white !important; opacity: 1; margin-top: 14px; margin-left: 2px; display: none;"></i>' . $this->copy_to_clipboard_button_text[$key] . '</div></a>';
-                $this->addToCheckboxControls($html_string);
+            $html_string = ' <a class="icon-btn btn blue copy-to-clipboard" ' . $callback . ' data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $copy_column . '"><i class="fa fa-copy"></i> <div style="width:112px; height:28px; white-space: pre-line;"><i class="copy-loading fa fa-spinner fa-spin" style="font-size: 14px; color: white !important; opacity: 1; margin-top: 14px; margin-left: 2px; display: none;"></i>' . $this->copy_to_clipboard_button_text[$key] . '</div></a>';
+            $this->addToCheckboxControls($html_string);
         }
     }
 
@@ -493,8 +493,8 @@ class DataTableJs implements DataTableJsInterface
 
             $callback = isset($this->copy_and_add_to_filter_column_callback[$key]) ? 'callback="'. $this->copy_and_add_to_filter_column_callback[$key] .'"' : '';
 
-                $html_string = ' <a class="icon-btn btn blue copy-to-filter" ' . $callback . ' data-dismiss="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $copy_column . '"><i class="fa fa-copy"></i> <div style="width:110px; height:28px; white-space: pre-line;"><i class="copy-loading fa fa-spinner fa-spin" style="font-size: 14px; color: white !important; opacity: 1; margin-top: 14px; margin-left: 2px; display: none;"></i>' . $this->copy_and_add_to_filter_button_text[$key] . '</div></a>';
-                $this->addToCheckboxControls($html_string);
+            $html_string = ' <a class="icon-btn btn blue copy-to-filter" ' . $callback . ' data-dismiss="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $copy_column . '"><i class="fa fa-copy"></i> <div style="width:110px; height:28px; white-space: pre-line;"><i class="copy-loading fa fa-spinner fa-spin" style="font-size: 14px; color: white !important; opacity: 1; margin-top: 14px; margin-left: 2px; display: none;"></i>' . $this->copy_and_add_to_filter_button_text[$key] . '</div></a>';
+            $this->addToCheckboxControls($html_string);
         }
     }
 
@@ -973,6 +973,7 @@ class DataTableJs implements DataTableJsInterface
      */
     private function prepareJsColumns()
     {
+        $sort_orders = [];
         $column_index = 0;
         foreach ($this->dataColumns as $column) {
             $prepareProperties = [];
@@ -1003,7 +1004,7 @@ class DataTableJs implements DataTableJsInterface
 
             $order = $this->isSortingOrder($column, $column_index);
             if (!is_bool($order)) {
-                $this->addJsOrder($order);
+                $sort_orders[] = $order;
             }
 
             if (($pos = $this->isCheckBoxColumns($column, $column_index)) !== false && $this->isExistAjaxUrl()) {
@@ -1011,6 +1012,10 @@ class DataTableJs implements DataTableJsInterface
             }
             $this->addJsColumns($prepareProperties);
             $column_index++;
+        }
+
+        if(!empty($sort_orders)){
+            $this->setJsOrder($sort_orders);
         }
 
         if (!$this->isExistAjaxUrl()) {
@@ -1041,10 +1046,12 @@ class DataTableJs implements DataTableJsInterface
 
     private function isExistInSortingOrderColumns($column, $column_index)
     {
+        $counter = 0;
         foreach ($this->sortingOrderColumns as $columns) {
             if ($columns[0] == $column) {
-                return [$column_index, $columns[1]];
+                return [$counter, $column_index, $columns[1]];
             }
+            $counter++;
         }
         return false;
     }
@@ -1056,6 +1063,14 @@ class DataTableJs implements DataTableJsInterface
         }
 
         return $this->isExistInSortingOrderColumns($column, $column_index);
+    }
+
+    private function setJsOrder($sort_orders){
+        array_multisort($sort_orders);
+        foreach ($sort_orders as $order)
+        {
+            $this->addJsOrder([$order[1], $order[2]]);
+        }
     }
 
     private function isNotExistInNotSearchableColumns($column)
@@ -1390,39 +1405,39 @@ class DataTableJs implements DataTableJsInterface
         return $this;
     }
 
-	public function disableSearchingPagingOrderingAndInfo()
-	{
-		$this->searching = $this->paging = $this->ordering = $this->info = 'false';
-		return $this;
-	}
+    public function disableSearchingPagingOrderingAndInfo()
+    {
+        $this->searching = $this->paging = $this->ordering = $this->info = 'false';
+        return $this;
+    }
 
-	public function disableSearchingPagingAndInfo()
-	{
-		$this->searching = $this->paging = $this->info = 'false';
-		return $this;
-	}
+    public function disableSearchingPagingAndInfo()
+    {
+        $this->searching = $this->paging = $this->info = 'false';
+        return $this;
+    }
 
-	public function disableSearching()
-	{
-		$this->searching = 'false';
-		return $this;
-	}
+    public function disableSearching()
+    {
+        $this->searching = 'false';
+        return $this;
+    }
 
-	public function disablePaging()
-	{
-		$this->paging = 'false';
-		return $this;
-	}
+    public function disablePaging()
+    {
+        $this->paging = 'false';
+        return $this;
+    }
 
-	public function disableOrdering()
-	{
-		$this->ordering = 'false';
-		return $this;
-	}
+    public function disableOrdering()
+    {
+        $this->ordering = 'false';
+        return $this;
+    }
 
-	public function disableInfo()
-	{
-		$this->info = 'false';
-		return $this;
-	}
+    public function disableInfo()
+    {
+        $this->info = 'false';
+        return $this;
+    }
 }

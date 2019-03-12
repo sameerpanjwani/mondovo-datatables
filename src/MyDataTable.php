@@ -111,6 +111,7 @@ class MyDataTable
     public function exportTo($response)
     {
         ini_set('memory_limit', '4096M'); //This is required to export tables with many rows like 50,0000
+        set_time_limit(1200);
         $file_type = \Request::get('file_type');
         $report_name = \Request::get('export_report_name');
         $report_date = \Request::get('export_report_date');

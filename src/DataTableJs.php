@@ -297,10 +297,9 @@ class DataTableJs implements DataTableJsInterface
         $this->prepareBulkKeywordDifficulty($table_id);
 
 
-        //Commented by jestin on 22-mar-2019, Since it's not required the default sorting.
-        /*if ($this->isEnabledDrawCheckbox() && empty($this->jsOrder)) {
+        if ($this->isEnabledDrawCheckbox() && empty($this->jsOrder)) {
             $this->addJsOrder([1, 'asc']);
-        }*/
+        }
 
         $hide_default_columns = $this->getDefaultHiddenColumnsStatus();
 

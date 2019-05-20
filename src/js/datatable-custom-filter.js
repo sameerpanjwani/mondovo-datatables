@@ -347,7 +347,7 @@ var MvDataTableFilter = function () {
     var loadFilterKeywordAttribute = function (callback) {
         var ajax_url;
         if(typeof MondovoManagerUrls == 'undefined')
-            ajax_url = Mondovo.get_keyword_attributes_url;
+            ajax_url = MVMondovo.get_keyword_attributes_url;
         else
             ajax_url = MondovoManagerUrls.get_keyword_attributes_url;
 
@@ -371,7 +371,7 @@ var MvDataTableFilter = function () {
     var loadSourceManagers = function (keyword_source_manager, page_source_manager, tag_source_manager, callback) {
         var ajax_url;
         if(typeof MondovoManagerUrls == 'undefined')
-            ajax_url = Mondovo.get_source_manager_url;
+            ajax_url = MVMondovo.get_source_manager_url;
         else
             ajax_url = MondovoManagerUrls.get_source_manager_url;
 
@@ -400,7 +400,7 @@ var MvDataTableFilter = function () {
 
         var ajax_url;
         if(typeof MondovoManagerUrls == 'undefined')
-            ajax_url = Mondovo.get_filter_source_manager_url;
+            ajax_url = MVMondovo.get_filter_source_manager_url;
         else
             ajax_url = MondovoManagerUrls.get_filter_source_manager_url;
 

@@ -32,8 +32,8 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
 
     public function of($builder)
     {
-    	//Check if special filter operator is available
-	    $this->checkSpecialFilterOperatorsAvailable();
+        //Check if special filter operator is available
+        $this->checkSpecialFilterOperatorsAvailable();
 
         parent::of($builder);
 
@@ -1581,7 +1581,7 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
             $key = $keys[$column_index];
             foreach ($data as $values)
             {
-                $values_to_be_filtered[] = $values->{$key};
+                $values_to_be_filtered[] = $this->getValueUsingKey($values, $key);
             }
         }
 
@@ -1619,10 +1619,10 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
             {
                 if($exclude == 'yes')
                 {
-                    if(!in_array($values->{$key}, $filtered_values))
+                    if(!in_array($this->getValueUsingKey($values, $key), $filtered_values))
                         $filtered_data[] = $values;
                 }else{
-                    if(in_array($values->{$key}, $filtered_values))
+                    if(in_array($this->getValueUsingKey($values, $key), $filtered_values))
                         $filtered_data[] = $values;
                 }
             }
@@ -1630,6 +1630,11 @@ class DataTableFilter extends DataTableAdapter implements DataTableFilterInterfa
 
         $filtered_data = new Collection($filtered_data);
         $this->collection = new Collection($filtered_data);
+    }
+
+    private function getValueUsingKey($subject_var, $key)
+    {
+        return (is_array($subject_var)) ? $subject_var[$key] : $subject_var->{$subject_var};
     }
 
     private function filterCollectionValues($table, $column, $tag_campaign_id, $values_to_be_filtered)

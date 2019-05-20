@@ -26,10 +26,10 @@ var MvDataTableCheckboxDesign = {
         return '<div class="mv_records_toolbar" table-id="' + table_id + '"><hr class="clearfix margin-bottom-10 margin-top-10"><span class="mv_selected_records"><strong>' + records + '</strong> ' + MvDataTableCheckboxDesign.RecordSelected + ' &nbsp;</span></div>';
     },
     TotalRecords: function (total_records) {
-        return '<a class="mv_select_all_records hidden primary-btn btn btn-sm tooltips"> <i class="fa fa-check-square"></i> ' + MvDataTableCheckboxDesign.SelectMsg + ' ' + MvDataTableCheckboxDesign.All + ' ' + total_records + ' ' + MvDataTableCheckboxDesign.RecordMsg + '</a>';
+        return '<a class="mv_select_all_records hidden mv-btn-sm mv-btn-primary tooltips"> <i class="fa fa-check-square"></i> ' + MvDataTableCheckboxDesign.SelectMsg + ' ' + MvDataTableCheckboxDesign.All + ' ' + total_records + ' ' + MvDataTableCheckboxDesign.RecordMsg + '</a>';
     },
     ClearRecords: function (records) {
-        return '<a class="mv_clear_records cancel-btn btn btn-sm" > <i class="fa fa-remove"></i> '+MvDataTableCheckboxDesign.ClearMsg + ' <span class="mv_clear_records_counter">' + records + '</span> ' + MvDataTableCheckboxDesign.CheckboxesMsg+'</a>';
+        return '<a class="mv_clear_records mv-btn-sm mv-btn-cancel" > <i class="fa fa-remove"></i> '+MvDataTableCheckboxDesign.ClearMsg + ' <span class="mv_clear_records_counter">' + records + '</span> ' + MvDataTableCheckboxDesign.CheckboxesMsg+'</a>';
     },
     SearchMessage: function (records) {
         return MvDataTableCheckboxDesign.SearchAlertMsg + ' ' + records + ' ' + MvDataTableCheckboxDesign.SearchAlertSuffixMsg;

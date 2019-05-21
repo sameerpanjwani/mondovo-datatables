@@ -89,8 +89,8 @@ var MvDataTableFilterDesign = {
     },
     SecondDropDown: function (refId, selectId) {
         selectHtml = '<select id="' + refId + '" class="form-control">';
-        var dropdown = Mondovo[selectId];
-        selectHtml += '<option value="">' + dropdown.blankLabel + '</option>'
+        var dropdown = MVMondovo[selectId];
+        selectHtml += '<option value="">' + dropdown.blankLabel + '</option>';
         for (var i = 0; i < dropdown.list.length; i++) {
             selectHtml += '<option value="' + dropdown.list[i].value + '">' + dropdown.list[i].text + '</option>';
         }

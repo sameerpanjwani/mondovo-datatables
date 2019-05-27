@@ -116,6 +116,9 @@ class DataTableJs implements DataTableJsInterface
     protected $ordering = 'true';
     protected $info = 'true';
 
+    protected $save_coulmn_visibility_state_call_back = "";
+    protected $set_coulmn_visibility_state_call_back = "";
+
     function __construct(DataTableFilterInterface $datatable)
     {
 
@@ -335,7 +338,7 @@ class DataTableJs implements DataTableJsInterface
             $kd_modal_url = route(config('mondovo-datatable.kd_modal_url'));
         }
 
-        $js_variables = ['table_id' => $table_id, 'ajax_url' => $this->getAjaxUrl(), 'page_length' => $this->getPageLength(), 'js_columns' => json_encode($this->jsColumns), 'js_order' => json_encode($this->jsOrder), 'checkbox_columns' => json_encode($this->checkbox_columns), 'checkbox_control_text' => $this->checkbox_controls_html_string, 'datatable_js_objects' => $this->datatable_js_objects, 'datatable_fixed_columns_objects' => $this->datatable_fixed_columns_objects, 'ajax_callback_function' => $this->ajax_callback_function, 'ajax_success_callback_function' => $this->ajax_success_callback_function, 'pre_draw_callback_function' => $this->pre_draw_callback_function, 'keyword_manager_column' => ($keyword_manager_column > 0) ? $keyword_manager_column : -1, 'tag_manager_column' => ($tag_manager_column > 0) ? $tag_manager_column : -1, 'page_manager_column' => ($page_manager_column > 0) ? $page_manager_column : -1, 'manager_url' => $manager_url,'ajax_request'=>$ajax_request,'hide_default_columns'=>$hide_default_columns,'pdf_view'=>$pdf_view,'data_rows'=>$data_rows, 'custom_empty_table_message' => $this->getCustomEmptyTableMessage(), 'auto_width' => $this->auto_width, 'loading_on_scroll' => $this->loading_on_scroll, 'scroll_y' => $this->scroll_y, 'enable_kd' => ($enable_kd > 0) ? $enable_kd : -1, 'kd_modal_url' => $kd_modal_url, 'text_selector_filter' => $this->text_selector_filter, 'table_info' => $this->table_info, 'searching' => $this->searching, 'paging' => $this->paging, 'ordering' => $this->ordering, 'info' => $this->info ];
+        $js_variables = ['table_id' => $table_id, 'ajax_url' => $this->getAjaxUrl(), 'page_length' => $this->getPageLength(), 'js_columns' => json_encode($this->jsColumns), 'js_order' => json_encode($this->jsOrder), 'checkbox_columns' => json_encode($this->checkbox_columns), 'checkbox_control_text' => $this->checkbox_controls_html_string, 'datatable_js_objects' => $this->datatable_js_objects, 'datatable_fixed_columns_objects' => $this->datatable_fixed_columns_objects, 'ajax_callback_function' => $this->ajax_callback_function, 'ajax_success_callback_function' => $this->ajax_success_callback_function, 'pre_draw_callback_function' => $this->pre_draw_callback_function, 'keyword_manager_column' => ($keyword_manager_column > 0) ? $keyword_manager_column : -1, 'tag_manager_column' => ($tag_manager_column > 0) ? $tag_manager_column : -1, 'page_manager_column' => ($page_manager_column > 0) ? $page_manager_column : -1, 'manager_url' => $manager_url,'ajax_request'=>$ajax_request,'hide_default_columns'=>$hide_default_columns,'pdf_view'=>$pdf_view,'data_rows'=>$data_rows, 'custom_empty_table_message' => $this->getCustomEmptyTableMessage(), 'auto_width' => $this->auto_width, 'loading_on_scroll' => $this->loading_on_scroll, 'scroll_y' => $this->scroll_y, 'enable_kd' => ($enable_kd > 0) ? $enable_kd : -1, 'kd_modal_url' => $kd_modal_url, 'text_selector_filter' => $this->text_selector_filter, 'table_info' => $this->table_info, 'searching' => $this->searching, 'paging' => $this->paging, 'ordering' => $this->ordering, 'info' => $this->info, 'visibility_save_call_back' => $this->save_coulmn_visibility_state_call_back, 'visibility_set_callback' => $this->set_coulmn_visibility_state_call_back ];
         return view('mondovo.datatable.datatable-js', $js_variables);
     }
 
@@ -1438,6 +1441,13 @@ class DataTableJs implements DataTableJsInterface
     public function disableInfo()
     {
         $this->info = 'false';
+        return $this;
+    }
+
+    public function enableSaveColumnVisibilityState($save_callback_function, $set_callback_function)
+    {
+        $this->save_coulmn_visibility_state_call_back = $save_callback_function;
+        $this->set_coulmn_visibility_state_call_back = $set_callback_function;
         return $this;
     }
 }

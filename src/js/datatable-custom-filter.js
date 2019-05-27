@@ -261,6 +261,8 @@ var MvDataTableFilter = function () {
 
     var post_filter_clear_callback = [];
 
+    var save_view_state_callback = {};
+
     var css_class = MvDataTableFilterDesign.CssClassCollection;
 
     var DataTableFilterSettings = {
@@ -3167,15 +3169,16 @@ var MvDataTableFilter = function () {
             //this is for the toggle functionality of the show/hide columns feature
             //show a loader here
 
-
             var checkbox_id = $(element).data('checkbox-id');
             var class_name = $(element).data('toggle-class');
             var table_id = $(element).data('table-id');
             var table = $('#' + table_id).DataTable();
+            var visible_status = 'show';
 
             if ($('#' + checkbox_id).is(":checked") == true) {
 
                 $('#'+checkbox_id).prop('checked', false);
+                visible_status = 'hide';
 
                 if (class_name.indexOf('_parent') > 0) {
                     class_name = class_name.replace("_parent", "_child");
@@ -3219,6 +3222,10 @@ var MvDataTableFilter = function () {
                 }
             }
             MvDataTableFilter.adjustOddEvenColumns(table_id);
+            var save_visibility_function_name = 'saveVisibilityState_' + table_id;
+            if(typeof save_view_state_callback[table_id] !== 'undefined'){
+                save_view_state_callback[table_id](visible_status, table_id, class_name);
+            }
             //table.columns.adjust().draw( false );
             //hide the loader here
         },
@@ -3229,7 +3236,10 @@ var MvDataTableFilter = function () {
             return drawKeywordGroupFilterData(table_id, column_name, column_index);
         },
         dataTableInLineTextSelectorSpecialFilter: dataTableInLineTextSelectorSpecialFilter,
-        getStaticTableDataCount: getStaticTableDataCount
+        getStaticTableDataCount: getStaticTableDataCount,
+        updateSaveViewStateCallback: function(table_id, callback){
+            save_view_state_callback[table_id] = callback;
+        }
     }
 }();
 

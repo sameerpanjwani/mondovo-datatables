@@ -117,4 +117,6 @@ interface DataTableJsInterface {
 
     public function setTableInfo($description);
 
+    public function enableSaveColumnVisibilityState($save_callback_function, $set_callback_function);
+
 }

@@ -46,11 +46,11 @@ class MyDataTable
 
     protected $logo_path;
 
-	protected $delete_logo;
+    protected $delete_logo;
 
-	protected $logo_sub_path = "excel-logos";
+    protected $logo_sub_path = "excel-logos";
 
-	/**
+    /**
      * @param DrawTableInterface $drawtable
      * @param DataTableFilterInterface $datatable
      * @param DataTableJsInterface $datatable_js
@@ -238,27 +238,27 @@ class MyDataTable
                     });
 
                 $sheet->fromArray($rows, null, 'A' . $row_count, true, false);
-	            $logo_location = $this->getLogo();
-	            $disk_name = $this->getStorageDisk();
+                $logo_location = $this->getLogo();
+                $disk_name = $this->getStorageDisk();
 
-	            if (Storage::disk($disk_name)->exists($logo_location)) {
-		            $local_logo_location = $this->getLocalStorageDisk();
-		            $logo = Storage::disk($disk_name)->get($logo_location);
-		            if($logo){
-			            $ext = pathinfo($logo_location, PATHINFO_EXTENSION);
-			            $file_name = md5(microtime(true)).".$ext";
-			            Storage::disk($local_logo_location)->put($this->logo_sub_path."/".$file_name, $logo);
-		            }
-		            $local_file_folder_path = \Storage::disk($local_logo_location)->getDriver()->getAdapter()->getPathPrefix();
-		            $this->delete_older_than($local_file_folder_path.$this->logo_sub_path, 60);
-		            $logo_location = $local_file_folder_path.$this->logo_sub_path."/".$file_name;
-	            }else{
-	            	if(!file_exists($logo_location)){
-			            $logo_location = $this->getDefaultLogo();
-		            }
-	            }
-	            $objDrawing = new PHPExcel_Worksheet_Drawing;
-	            $objDrawing->setPath($logo_location);
+                if (Storage::disk($disk_name)->exists($logo_location)) {
+                    $local_logo_location = $this->getLocalStorageDisk();
+                    $logo = Storage::disk($disk_name)->get($logo_location);
+                    if($logo){
+                        $ext = pathinfo($logo_location, PATHINFO_EXTENSION);
+                        $file_name = md5(microtime(true)).".$ext";
+                        Storage::disk($local_logo_location)->put($this->logo_sub_path."/".$file_name, $logo);
+                    }
+                    $local_file_folder_path = \Storage::disk($local_logo_location)->getDriver()->getAdapter()->getPathPrefix();
+                    $this->delete_older_than($local_file_folder_path.$this->logo_sub_path, 60);
+                    $logo_location = $local_file_folder_path.$this->logo_sub_path."/".$file_name;
+                }else{
+                    if(!file_exists($logo_location)){
+                        $logo_location = $this->getDefaultLogo();
+                    }
+                }
+                $objDrawing = new PHPExcel_Worksheet_Drawing;
+                $objDrawing->setPath($logo_location);
 
                 $objDrawing->setCoordinates('A1');
                 $objDrawing->setOffsetX(10);
@@ -273,37 +273,37 @@ class MyDataTable
         return $excel;
     }
 
-	public function delete_older_than($dir, $max_age) {
-		$list = array();
+    public function delete_older_than($dir, $max_age) {
+        $list = array();
 
-		$limit = time() - $max_age;
+        $limit = time() - $max_age;
 
-		$dir = realpath($dir);
+        $dir = realpath($dir);
 
-		if (!is_dir($dir)) {
-			return;
-		}
+        if (!is_dir($dir)) {
+            return;
+        }
 
-		$dh = opendir($dir);
-		if ($dh === false) {
-			return;
-		}
+        $dh = opendir($dir);
+        if ($dh === false) {
+            return;
+        }
 
-		while (($file = readdir($dh)) !== false) {
-			$file = $dir . '/' . $file;
-			if (!is_file($file)) {
-				continue;
-			}
+        while (($file = readdir($dh)) !== false) {
+            $file = $dir . '/' . $file;
+            if (!is_file($file)) {
+                continue;
+            }
 
-			if (filemtime($file) <= $limit) {
-				$list[] = $file;
-				unlink($file);
-			}
+            if (filemtime($file) <= $limit) {
+                $list[] = $file;
+                unlink($file);
+            }
 
-		}
-		closedir($dh);
-		return $list;
-	}
+        }
+        closedir($dh);
+        return $list;
+    }
 
     protected function isExternalUrl($logo_location)
     {
@@ -1516,6 +1516,12 @@ class MyDataTable
     {
         $this->drawtable->enableCheckBoxLimit($limit);
 
+        return $this;
+    }
+
+    public function enableSaveColumnVisibilityState($save_callback_function, $set_callback_function)
+    {
+        $this->datatable_js->enableSaveColumnVisibilityState($save_callback_function, $set_callback_function);
         return $this;
     }
 

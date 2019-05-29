@@ -1519,7 +1519,7 @@ class MyDataTable
         return $this;
     }
 
-    public function enableSaveColumnVisibilityState($save_callback_function, $set_callback_function)
+    public function enableSaveColumnVisibilityState($save_callback_function = "", $set_callback_function = "")
     {
         $this->datatable_js->enableSaveColumnVisibilityState($save_callback_function, $set_callback_function);
         return $this;

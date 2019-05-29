@@ -1444,10 +1444,14 @@ class DataTableJs implements DataTableJsInterface
         return $this;
     }
 
-    public function enableSaveColumnVisibilityState($save_callback_function, $set_callback_function)
+    public function enableSaveColumnVisibilityState($save_callback_function = "", $set_callback_function = "")
     {
+        $save_callback_function = ($save_callback_function == "") ? "function saveVisibility(visible_status, table_id, toggle_class){MvSaveVisibilityState.saveVisibilityState(visible_status, table_id, toggle_class);}" : "";
+        $set_callback_function = ($set_callback_function == "") ? "MvSaveVisibilityState.setVisibilityForColumns('detailedCompetitionRankingInsightsTable');" : "";
+
         $this->save_coulmn_visibility_state_call_back = $save_callback_function;
         $this->set_coulmn_visibility_state_call_back = $set_callback_function;
+
         return $this;
     }
 }

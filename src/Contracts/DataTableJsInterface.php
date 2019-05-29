@@ -117,6 +117,18 @@ interface DataTableJsInterface {
 
     public function setTableInfo($description);
 
-    public function enableSaveColumnVisibilityState($save_callback_function, $set_callback_function);
+    public function disableSearchingPagingOrderingAndInfo();
+
+    public function disableSearchingPagingAndInfo();
+
+    public function disableSearching();
+
+    public function disablePaging();
+
+    public function disableOrdering();
+
+    public function disableInfo();
+
+    public function enableSaveColumnVisibilityState($save_callback_function = "", $set_callback_function = "");
 
 }

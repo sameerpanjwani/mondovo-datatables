@@ -44,6 +44,7 @@ var MvDataTableFilterDesign = {
         select_manager_class: 'select-manager',
         add_from_manager_class: 'add-from-manager',
         filter_from_manager_class: 'filter-from-manager',
+        filter_from_manager_in_built_class: 'filter-from-manager-in-built',
         keyword_attribute_class: 'keyword-attribute',
         filter_modal_class: 'filter-modal',
         custom_table_options: 'custom-table-options'
@@ -1490,6 +1491,10 @@ var MvDataTableFilter = function () {
         });
 
         $(document).on('click', '.' + css_class.filter_from_manager_class, function () {
+            filterFromManager(this);
+        });
+
+        $(document).on('click', '.' + css_class.filter_from_manager_in_built_class, function () {
             filterFromManager(this);
         });
 
@@ -3172,30 +3177,20 @@ var MvDataTableFilter = function () {
             var checkbox_id = $(element).data('checkbox-id');
             var class_name = $(element).data('toggle-class');
             var table_id = $(element).data('table-id');
-            var table = $('#' + table_id).DataTable();
             var visible_status = 'show';
 
             if ($('#' + checkbox_id).is(":checked") == true) {
-
-                $('#'+checkbox_id).prop('checked', false);
                 visible_status = 'hide';
+            }
 
-                if (class_name.indexOf('_parent') > 0) {
-                    class_name = class_name.replace("_parent", "_child");
-                    var table_child_columns = table.columns('.' + class_name).header().flatten().to$();
-
-                    $(table_child_columns).addClass('parent-hidden');
-                    table.columns('.' + class_name).visible(false,false);
-
-                } else {
-
-                    table.columns('.' + class_name).visible(false,false).header().flatten().to$().addClass('default-hidden');
-                }
-
-            } else {
-
-                $('#'+checkbox_id).prop('checked', true);
-
+            MvDataTableFilter.processToggleTableColumnVisibility(table_id, class_name, visible_status);
+        },
+        processToggleTableColumnVisibility: function(table_id, class_name, visible_status) {
+            var table = $('#' + table_id).DataTable();
+            var class_name_org = class_name;
+            if(visible_status === 'show')
+            {
+                $('#'+class_name).prop('checked', true);
                 if (class_name.indexOf('_parent') > 0) {
 
                     //This is to handle the situation of hiding columns that are not hidden by default and where there are multiple children columns
@@ -3210,7 +3205,7 @@ var MvDataTableFilter = function () {
                     table.columns('.default-hidden').visible(false,false);
                     var class_contents = $(table_child_columns).attr('class');
                     var col_group_name = class_contents.match(/(col-group-)\d/g);
-                    if (col_group_name[0] != "") {
+                    if (col_group_name != null && col_group_name[0] != "") {
 
                         var col_group_number = parseInt(col_group_name[0].replace("col-group-", ""));
 
@@ -3220,11 +3215,25 @@ var MvDataTableFilter = function () {
                     table.columns('.' + class_name).header().flatten().to$().removeClass('default-hidden'); //we remove the class default-hidden for all columns including the parent-hidden so that it can be shown again if made visible later
                     table.columns('.' + class_name + ':not(.parent-hidden)').visible(true,false); //we are removinv the class as well so that it will show after a table redraw as well, since we're hididng based on the condition of the class being present/absent in datatable-js.blade.php
                 }
+
+            }else{
+                $('#'+class_name).prop('checked', false);
+                if (class_name.indexOf('_parent') > 0) {
+                    class_name = class_name.replace("_parent", "_child");
+                    var table_child_columns = table.columns('.' + class_name).header().flatten().to$();
+
+                    $(table_child_columns).addClass('parent-hidden');
+                    table.columns('.' + class_name).visible(false,false);
+
+                } else {
+
+                    table.columns('.' + class_name).visible(false,false).header().flatten().to$().addClass('default-hidden');
+                }
             }
             MvDataTableFilter.adjustOddEvenColumns(table_id);
             var save_visibility_function_name = 'saveVisibilityState_' + table_id;
             if(typeof save_view_state_callback[table_id] !== 'undefined'){
-                save_view_state_callback[table_id](visible_status, table_id, class_name);
+                save_view_state_callback[table_id](visible_status, table_id, class_name_org);
             }
             //table.columns.adjust().draw( false );
             //hide the loader here

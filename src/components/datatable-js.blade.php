@@ -51,7 +51,6 @@ MvDataTableFilter.datatableClearAllFilter("{{$table_id}}");
 $("#{{$table_id}}").css("opacity",0.5);
 $("#{{$table_id}}_processing").html('<button class="btn"><i class="fa fa-spinner fa-spin"></i> Loading the table\'s contents</button>').css('position','absolute');
 
-
 },
 serverSide: true,
 ajax: {
@@ -139,7 +138,7 @@ before_first_request_{{$table_id}} = false;
 $('#{{$table_id}}').parents('.mv-box-layout').addClass('mv-box-layout-pdf');
 <?php } ?>
 @if($visibility_set_callback != "")
-    {!! $visibility_set_callback !!};
+    {!! $visibility_set_callback !!}
 @endif
 @if($visibility_save_call_back != "")
     MvDataTableFilter.updateSaveViewStateCallback('{{$table_id}}', {!! $visibility_save_call_back !!});

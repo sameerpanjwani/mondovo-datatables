@@ -119,6 +119,8 @@ class DataTableJs implements DataTableJsInterface
     protected $save_coulmn_visibility_state_call_back = "";
     protected $set_coulmn_visibility_state_call_back = "";
 
+    protected $table_id;
+
     function __construct(DataTableFilterInterface $datatable)
     {
 
@@ -1408,6 +1410,16 @@ class DataTableJs implements DataTableJsInterface
         return $this;
     }
 
+    /**
+     * @param $table_id
+     */
+    public function setTableId($table_id)
+    {
+        $this->table_id = $table_id;
+
+        return $this;
+    }
+
     public function disableSearchingPagingOrderingAndInfo()
     {
         $this->searching = $this->paging = $this->ordering = $this->info = 'false';
@@ -1447,7 +1459,7 @@ class DataTableJs implements DataTableJsInterface
     public function enableSaveColumnVisibilityState($save_callback_function = "", $set_callback_function = "")
     {
         $save_callback_function = ($save_callback_function == "") ? "function saveVisibility(visible_status, table_id, toggle_class){MvSaveVisibilityState.saveVisibilityState(visible_status, table_id, toggle_class);}" : "";
-        $set_callback_function = ($set_callback_function == "") ? "MvSaveVisibilityState.setVisibilityForColumns('detailedCompetitionRankingInsightsTable');" : "";
+        $set_callback_function = ($set_callback_function == "") ? "MvSaveVisibilityState.setVisibilityForColumns('$this->table_id');" : "";
 
         $this->save_coulmn_visibility_state_call_back = $save_callback_function;
         $this->set_coulmn_visibility_state_call_back = $set_callback_function;

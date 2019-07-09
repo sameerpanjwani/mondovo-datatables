@@ -117,6 +117,8 @@ interface DataTableJsInterface {
 
     public function setTableInfo($description);
 
+    public function setTableId($table_id);
+
     public function disableSearchingPagingOrderingAndInfo();
 
     public function disableSearchingPagingAndInfo();

@@ -610,6 +610,7 @@ class MyDataTable
     public function setTableId($table_id)
     {
         $this->drawtable->setTableId($table_id);
+        $this->datatable_js->setTableId($table_id);
         return $this;
     }
 

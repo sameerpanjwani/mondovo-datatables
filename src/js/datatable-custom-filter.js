@@ -3186,6 +3186,10 @@ var MvDataTableFilter = function () {
             MvDataTableFilter.processToggleTableColumnVisibility(table_id, class_name, visible_status);
         },
         processToggleTableColumnVisibility: function(table_id, class_name, visible_status) {
+            if($('#' + table_id).length < 1){
+                return;
+            }
+
             var table = $('#' + table_id).DataTable();
             var class_name_org = class_name;
             if(visible_status === 'show')

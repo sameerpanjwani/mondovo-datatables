@@ -527,6 +527,7 @@ class MyDataTable
      */
     public function make($mDataSupport = false)
     {
+	    $filter_applied = false;
         $export = \Request::get('export');
         $checkbox_column = \Request::get('checkbox_column');
 
@@ -538,9 +539,19 @@ class MyDataTable
         $data_keyword_grouping = \Request::get('data_keyword_grouping') == 'on';
         $keyword_grouping_column_name = \Request::get('keyword_grouping_column_name');
         $keyword_grouping_column_index = \Request::get('keyword_grouping_column_index');
+	    if((request()->has('maximizerFilter') && !empty(request('maximizerFilter'))) ||
+		    (request()->has('search') && isset(request('search')['value']) && !empty(request('search')['value']))){
+		    $filter_applied = true;
+	    }
 
         $data = $this->datatable->make($mDataSupport);
-        if ($data_keyword_grouping && !empty($keyword_grouping_column_name)) {
+	    if($filter_applied){
+		    $temp_data = $data->getData();
+		    $temp_data->filter_applied = $filter_applied;
+		    $data = new JsonResponse($temp_data);
+	    }
+
+	    if ($data_keyword_grouping && !empty($keyword_grouping_column_name)) {
             return $this->setKeywordGroups($keyword_grouping_column_name, $data, $keyword_grouping_column_index);
         } elseif ($data_keyword_grouping) {
             return json_encode([]);

@@ -527,7 +527,6 @@ class MyDataTable
      */
     public function make($mDataSupport = false)
     {
-	    $filter_applied = false;
         $export = \Request::get('export');
         $checkbox_column = \Request::get('checkbox_column');
 
@@ -539,19 +538,9 @@ class MyDataTable
         $data_keyword_grouping = \Request::get('data_keyword_grouping') == 'on';
         $keyword_grouping_column_name = \Request::get('keyword_grouping_column_name');
         $keyword_grouping_column_index = \Request::get('keyword_grouping_column_index');
-	    if((request()->has('maximizerFilter') && !empty(request('maximizerFilter'))) ||
-		    (request()->has('search') && isset(request('search')['value']) && !empty(request('search')['value']))){
-		    $filter_applied = true;
-	    }
 
         $data = $this->datatable->make($mDataSupport);
-	    if($filter_applied){
-		    $temp_data = $data->getData();
-		    $temp_data->filter_applied = $filter_applied;
-		    $data = new JsonResponse($temp_data);
-	    }
-
-	    if ($data_keyword_grouping && !empty($keyword_grouping_column_name)) {
+        if ($data_keyword_grouping && !empty($keyword_grouping_column_name)) {
             return $this->setKeywordGroups($keyword_grouping_column_name, $data, $keyword_grouping_column_index);
         } elseif ($data_keyword_grouping) {
             return json_encode([]);
@@ -621,7 +610,6 @@ class MyDataTable
     public function setTableId($table_id)
     {
         $this->drawtable->setTableId($table_id);
-        $this->datatable_js->setTableId($table_id);
         return $this;
     }
 
@@ -1531,9 +1519,15 @@ class MyDataTable
         return $this;
     }
 
-    public function enableSaveColumnVisibilityState($save_callback_function = "", $set_callback_function = "")
+    public function enableSaveColumnVisibilityState($save_callback_function, $set_callback_function)
     {
         $this->datatable_js->enableSaveColumnVisibilityState($save_callback_function, $set_callback_function);
+        return $this;
+    }
+
+    public function setSelectFilterValues(array $options_values)
+    {
+        $this->drawtable->setSelectFilterValues($options_values);
         return $this;
     }
 

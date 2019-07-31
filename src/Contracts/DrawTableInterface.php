@@ -82,4 +82,5 @@ interface DrawTableInterface {
 
     public function enableCheckBoxLimit($limit);
 
+    public function setSelectFilterValues(array $options_values);
 }

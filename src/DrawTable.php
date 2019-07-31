@@ -156,6 +156,20 @@ class DrawTable implements DrawTableInterface
 
     protected $check_box_limit = 0;
 
+    protected $data_table_filter_settings = [
+        "text" => ["=", "Not Equals", "Contains", "Does not contain", "Contains (multiple)", "Does not contain (multiple)", "Starts With", "Ends With", "Is Empty", "Is Not Empty"],
+        "select" => ["=", "Not Equals"],
+        "filter" => ['In Tags', 'In Keywords', 'In Pages', 'Is of', 'Not In Tags', 'Not In Keywords', 'Not In Pages'],
+        "number" => ['=', "Not Equals", "&lt;", "&gt;", "&lt;=", "&gt;=", "Between", "Is Empty", "Is Not Empty"],
+        "all" => ["=", "Not Equals", "Contains", "Does not contain", "&lt;", "&gt;", "&lt;=", "&gt;=", "Is Empty", "Is Not Empty"]
+    ];
+    protected $column_filters_html = "";
+    protected $select_filter_values = [];
+    protected $column_filter_heading_hierarchy_level = [];
+    protected $column_filter_heading_hierarchy_delimiter = " -> ";
+    protected $column_filter_heading_hierarchy_level_count = 0;
+    protected $column_filter_heading_hierarchy_container = "";
+
     /**
      * @return boolean
      */
@@ -239,13 +253,14 @@ class DrawTable implements DrawTableInterface
             $this->drawCheckbox();
         }
 
-        $this->drawFilterDiv($this->getTableId());
-
         if ($this->filterEnabled()) {
 
             //dd($this->setDataColToColumnDefinition( $this->column_definitions ));
             $this->setDataColToColumnDefinition($this->column_definitions);
+            $this->generateFilterHtml($this->column_definitions);
         }
+
+        $this->drawFilterDiv($this->getTableId());
 
 
         $this->openTable();
@@ -983,9 +998,19 @@ class DrawTable implements DrawTableInterface
 
     protected function setDataColToColumnString($column_string)
     {
-        $column_string .= $this->getDelimiter() . 'data-col:' . $this->getCurrentColumnIndex();
+        $current_colun_index = $this->getCurrentColumnIndex();
+        $column_string .= $this->getDelimiter() . 'data-col:' . $current_colun_index;
+
         $this->increaseCurrentColumnIndex();
         return $column_string;
+    }
+
+    protected function getFilterTypeAndSelectId($column_string)
+    {
+        $filter_type = get_string_between($column_string, "data-filter-type:", "|");
+        $select_id = get_string_between($column_string, "data-filter-type:", "|");
+
+        return [$filter_type, $select_id];
     }
 
     public function setDataColToColumnDefinition(&$column_display_names, $nested = false, &$array_type = 0)
@@ -1036,6 +1061,7 @@ class DrawTable implements DrawTableInterface
                     //echo "Processed element $elements_processed [$column_index] out of ".$this->count_of_array_column_elements." elements from nested element $nested_count: ".$new_value."\n";
                     // $column_display_names = array_move($new_value, $column_index, $column_display_names);
                 } else {
+                    $this->addColumnFilterHeadingHierarchyLevel($key);
                     //  echo "Array nesting for $key:<br>";
                     $this->setDataColToColumnDefinition($column_string, true, $array_type);
                 }
@@ -1077,8 +1103,333 @@ class DrawTable implements DrawTableInterface
 
         }
 
+        /*if($this->column_filter_heading_hierarchy_level_count > 0) {
+            $this->column_filter_heading_hierarchy_level_count = $this->column_filter_heading_hierarchy_level_count - 1;
+            if($this->column_filter_heading_hierarchy_level_count == 0){
+                $this->closeColumnFilterHeadingHierarchyLevel();
+            }
+        }*/
+
         return $column_display_names;
     }
+
+    public function setSelectFilterValues(array $options_values)
+    {
+        $this->select_filter_values = $options_values;
+    }
+
+    protected function checkForColumnFilterHeadingHierarchyLevels($first_column)
+    {
+        $hierarchy = "";
+        if($first_column && !empty($this->column_filter_heading_hierarchy_level)){
+            /*if($this->column_filter_heading_hierarchy_level_count == 1){
+                $this->column_filters_html .= $this->setFilterContainerHierarchyContainer();
+            }*/
+            $hierarchy = "<div><b>" . implode($this->column_filter_heading_hierarchy_delimiter, $this->column_filter_heading_hierarchy_level) . "</b></div>";
+            $this->unsetColumnFilterHeadingHierarchyLevel();
+        }
+
+        return $hierarchy;
+    }
+
+    protected function filterContainerStart($table_id, $column_heading, $column_index, $first_column)
+    {
+        $hierarchy = $this->checkForColumnFilterHeadingHierarchyLevels($first_column);
+
+        $this->column_filters_html .= "$hierarchy <div class='panel panel-default filtered'>
+                         <a role='button' data-toggle='collapse' data-parent='#accordion' href='#collapse$table_id$column_index' aria-expanded='true' aria-controls='collapse$table_id$column_index'>
+                             <div class='panel-heading' role='tab' id='heading$table_id$column_index'>
+                                 <h4 class=\"panel-title\">
+                                     <svg>
+                                         <use class='filter-line' xlink:href='/img//svg-sprites/manage-alerts.svg#filter-line'></use>
+                                         <use class='filter-solid' style='display: none' xlink:href='/img//svg-sprites/manage-alerts.svg#filter-solid'></use>
+                                     </svg>
+                                     $column_heading
+                                 </h4>
+                                 <div id='$table_id-$column_index-alerts-tag'>
+                                 </div>
+                             </div>
+                         </a>
+                         <div id='collapse$table_id$column_index' class='panel-collapse collapse' role='tabpanel' aria-labelledby='heading$table_id$column_index'>
+                             <div class='panel-body'>
+                                 <div class='form-group margin-bottom-0'>";
+    }
+
+    protected function filterContainerEnd($table_id, $column_heading, $column_index)
+    {
+        $this->column_filters_html .= "<div>
+                                             <button type='button' class='btn blue btn-med global-filter-btn filter_now' tableId='$table_id' data-col='$column_index' data-custom-title='$column_heading' onclick='addTableColumnFilter(this)'>Add Filter</button>
+                                         </div>
+                                     </form>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>";
+    }
+
+    /*protected function setFilterContainerHierarchyContainer()
+    {
+        $this->column_filter_heading_hierarchy_container = "<div class='mv-table-heading-heirarchy'>";
+    }*/
+
+    protected function addColumnFilterHeadingHierarchyLevel($heading)
+    {
+        //$this->column_filter_heading_hierarchy_level_count++;
+
+        $this->column_filter_heading_hierarchy_level[] = $heading;
+
+        return $this->column_filter_heading_hierarchy_level;
+    }
+
+    protected function closeColumnFilterHeadingHierarchyLevel()
+    {
+        $this->column_filters_html .= "Closing hierarchy </div>";
+    }
+
+    protected function unsetColumnFilterHeadingHierarchyLevel()
+    {
+        array_pop($this->column_filter_heading_hierarchy_level);
+        //$this->column_filter_heading_hierarchy_level = [];
+    }
+
+    protected function generateFilterHtml($columns, $current_colun_index = -1, $nested = false)
+    {
+        $first_column = true;
+        if(!$nested){
+            $this->column_filter_heading_hierarchy_level = [];
+        }
+
+        foreach ($columns as $parent_column => $column_string)
+        {
+            if(is_array($column_string))
+            {
+                if(!empty($column_string)) {
+                    list($parent_column, $attributes) = $this->extractAttributesFromColumn($parent_column);
+                    $this->column_filter_heading_hierarchy_level[] = $parent_column;
+                    $this->generateFilterHtml($column_string, $current_colun_index, true);
+                    continue;
+                }else{
+                    $column_string = $parent_column;
+                }
+            }
+
+            $current_colun_index++;
+            //Generate filter html for each column
+            list($filter_type, $select_id) = $this->getFilterTypeAndSelectId($column_string);
+            if($filter_type != "") {
+                list($column_heading, $attributes) = $this->extractAttributesFromColumn($column_string);
+                $this->addFilterType($this->table_id, $filter_type, $column_heading, $current_colun_index, $first_column, $select_id);
+                $first_column = false;
+            }
+        }
+    }
+
+    protected function addFilterType($table_id, $filter_type, $column_heading, $column_index, $first_column, $select_id = "")
+    {
+        $this->filterContainerStart($table_id, $column_heading, $column_index, $first_column);
+        switch ($filter_type) {
+
+            case 'text':
+                //domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.text, tableId, column_index));
+                $this->column_filters_html .= $this->dropdown($table_id . "Operator" . $column_index, $this->data_table_filter_settings['text'], $table_id, $column_index);
+
+                //domObj.eq(1).html(MvDataTableFilterDesign.TextField(tableId + "FilterText" + column_index));
+                $this->column_filters_html .= $this->textField($table_id . "FilterText" . $column_index);
+
+                //$("body").append(MvDataTableFilterDesign.ContainsMultipleModal(tableId, column_index));
+                $this->column_filters_html .= $this->containsMultipleModal($table_id, $column_index);
+
+                //$("body").append(MvDataTableFilterDesign.DoesNotContainsMultipleModal(tableId, column_index));
+                $this->column_filters_html .= $this->doesNotContainsMultipleModal($table_id, $column_index);
+                break;
+
+            case 'number':
+                //domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.number));
+                $this->column_filters_html .= $this->dropdown($table_id . "Operator" . $column_index, $this->data_table_filter_settings['number'], $table_id, $column_index);
+
+                //domObj.eq(1).html(MvDataTableFilterDesign.TextFieldForNumber(tableId + "FilterNumber" + column_index, tableId + "Operator" + column_index, tableId, column_index));
+                $this->column_filters_html .= $this->textFieldForNumber($table_id . "FilterNumber" . $column_index, $table_id . "Operator" . $column_index,$table_id, $column_index);
+                break;
+
+            case 'select':
+                /*var select_id = checkSelectId(self);
+                if (!select_id) {
+                    return false;
+                }*/
+                //domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.select));
+                $this->column_filters_html .= $this->dropdown($table_id . "Operator" . $column_index, $this->data_table_filter_settings['select']);
+
+                //domObj.eq(1).html(MvDataTableFilterDesign.SecondDropDown(tableId + "FilterSelect" + column_index, select_id));
+                $this->column_filters_html .= $this->secondDropDown($table_id . "FilterSelect" . $column_index, $select_id);
+                break;
+            case 'date':
+                //domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.all));
+                $this->column_filters_html .= $this->dropdown($table_id . "Operator" . $column_index, $this->data_table_filter_settings['all']);
+
+                //var $ref_id = tableId + "FilterDateTime" + column_index;
+                //domObj.eq(1).html(MvDataTableFilterDesign.TextField(refId));
+                //$('#' + refId).datepicker({autoclose: true, container: domObj.eq(1)});
+                $this->column_filters_html .= $this->textField($table_id . "FilterDateTime" . $column_index);
+                break;
+            default:
+                //domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.all));
+                $this->column_filters_html .= $this->dropdown($table_id . "Operator" . $column_index, $this->data_table_filter_settings['all']);
+
+                //domObj.eq(1).html(MvDataTableFilterDesign.TextField(tableId + "FilterText" + column_index));
+                $this->column_filters_html .= $this->textField($table_id . "FilterText" . $column_index);
+        }
+        $this->filterContainerEnd($table_id, $column_heading, $column_index);
+    }
+
+    protected function dropdown($ref_id, $options, $table_id = '', $column_index = '')
+    {
+        $contains_modal_id_part = '';
+        if($table_id != '') {
+            $contains_modal_id_part = $table_id . 'FilterTextArea' . $column_index;
+        }
+
+        $filter_select_tag = '<select id="' . $ref_id . '" class="operator_select form-control" table-id="' . $table_id.  '" column-index="' . $column_index . '" data-contains-modal-id-part="' . $contains_modal_id_part . '">';
+
+        for ($i = 0; $i < count($options); $i++) {
+            $filter_select_tag .= '<option value="' . $i . '">' . $options[$i] . '</option>';
+        }
+
+        $filter_select_tag .= '</select>';
+
+        return $filter_select_tag;
+    }
+
+    protected function secondDropDown($ref_id, $select_id)
+    {
+        $select_html = '<select id="' . $ref_id . '" class="form-control">';
+        $dropdown = (isset($this->select_filter_values[$select_id])) ? $this->select_filter_values[$select_id] : [];
+        if(!empty($dropdown)) {
+            $select_html .= '<option value="">' . $dropdown["blank_label"] . '</option>';
+            for ($i = 0; $i < count($dropdown['list']); $i++) {
+                $select_html .= '<option value="' . $dropdown['list'][$i]['value'] . '">' . $dropdown['list'][$i]['text'] . '</option>';
+            }
+        }
+        $select_html .= '</select>';
+        return $select_html;
+    }
+
+    protected function textField($ref_id)
+    {
+        return '<input type="text" id="' . $ref_id . '"  class="form-control operand_text mx_dt_text" >';
+    }
+
+    protected function textArea($ref_id)
+    {
+        return '<div class="mx_dt_text_area_container" style="display: none;" ><textarea id="' . $ref_id . '"  class="form-control operand_text mx_dt_text_area" ></textarea> <label class="mx_dt_radio_label"><input name="' . $ref_id . '_radio" type="radio" id="' . $ref_id . '_radio_all" value="all" checked > All</label>&nbsp;&nbsp;<label class="mx_dt_radio_label"><input name="' . $ref_id . '_radio" type="radio" id="' . $ref_id . '_radio_any_one" value="any" > Any one</label></div>';
+    }
+
+    protected function containsMultipleModal($table_id, $column_index) {
+        $ref_id = $table_id . "FilterTextArea" . $column_index;
+        return '<div id="contains_multiple_modal_for_' . $ref_id . '" data-keyboard="true" class="modal fade in new-modal-styles" aria-hidden="true">' .
+            '<div class="modal-dialog modal-lg width-70">' .
+            '<div class="modal-content">' .
+            '<div class="modal-header">' .
+            '<button aria-hidden="true" data-dismiss="modal" class="close contains-multiple-close" type="button" id="close_button" table-id="' . $table_id . '" column-index="' . $column_index . '"></button>' .
+            '<h4 class="modal-title">Contains Multiple</h4>' .
+            '</div>' .
+            '<div class="modal-body nopadding">' .
+            '<div class="form">' .
+            '<div class="form_content"> <div class="form-horizontal form-bordered">' .
+            '<div class="form-group form-md-line-input" style="padding-bottom: 0px !important;">' .
+            '<div class="control-label col-xs-12 col-sm-4 col-md-4 col-lg-3">' .
+            '<label for="select_tags">Enter Keywords:<div style="font-size:11px;text-align:center;">(one keyword/phrase per line)</div></label>' .
+            '</div>' .
+            '<div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">' .
+            '<div class="input-xlarge input-inline">' .
+            '<textarea id="' . $ref_id . '"  class="'. $table_id .' form-control operand_text mx_dt_text_area"></textarea>' .
+            '</div>' .
+            '<div class="input-xlarge" style="margin-top: 5px;">' .
+            '<span class="pull-right">' .
+            '<a data-toggle="modal" href="#" class="btn mini add-from-manager" data-type="keywords" data-manager-type="tag-pages" data-source-selector="' . $ref_id . '" data-max-attr-allowed="5000"><i class="fa fa-bitbucket"></i> Import Keywords </a>' .
+            '</span>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '<div class="form-group form-md-line-input" style="padding-top: 5px !important;">' .
+            '<div class="control-label col-xs-12 col-sm-4 col-md-4 col-lg-3">' .
+            '<label for="select_tags">Contains:</label>' .
+            '</div>' .
+            '<div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">' .
+            '<div class="md-radio-inline">' .
+            '<div class="md-radio">' .
+            '<input name="' . $ref_id . '_radio" type="radio" id="' . $ref_id . '_radio_any_one" value="any" checked="checked" radio_text="Any One"><label for="' . $ref_id . '_radio_any_one"><span class="inc"></span><span class="check"></span><span class="box"></span>Any One</label>' .
+            '</div>' .
+            '<div class="md-radio">' .
+            '<input name="' . $ref_id . '_radio" type="radio" id="' . $ref_id . '_radio_all" value="all" radio_text="All"><label for="' . $ref_id . '_radio_all"><span class="inc"></span><span class="check"></span><span class="box"></span>All</label>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '<div class="form-actions clearfix">' .
+            '<div class="col-md-offset-3 col-md-9 col-lg-offset-3 col-lg-9 margin-bottom-20">' .
+            '<button type="button" data-dismiss="modal" class="filter_now_from_contains_modal btn blue btn-med" table-id="' . $table_id . '" column-index="' . $column_index . '">Filter</button>' .
+            '<button type="button" data-dismiss="modal" class="btn default btn-med contains-multiple-close" table-id="' . $table_id . '" column-index="' . $column_index . '">Close</button>' .
+            '</div>' .
+            '</div>' .
+            '</div></div>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '</div>';
+    }
+
+    protected function doesNotContainsMultipleModal($table_id, $column_index)
+    {
+        $ref_id = $table_id . "FilterTextArea" . $column_index;
+        return '<div id="does_not_contain_multiple_modal_for_' . $ref_id . '" data-keyboard="true" class="modal fade in new-modal-styles" aria-hidden="true">' .
+            '<div class="modal-dialog modal-lg width-70">' .
+            '<div class="modal-content">' .
+            '<div class="modal-header">' .
+            '<button aria-hidden="true" data-dismiss="modal" class="close contains-multiple-close" type="button" id="close_button" table-id="' .$table_id . '" column-index="' . $column_index . '"></button>' .
+            '<h4 class="modal-title">Does Not Contains Multiple</h4>' .
+            '</div>' .
+            '<div class="modal-body nopadding">' .
+            '<div class="form">' .
+            '<div class="form_content"> <div class="form-horizontal form-bordered">' .
+            '<div class="form-group form-md-line-input" style="padding-bottom: 0px !important;">' .
+            '<div class="control-label col-xs-12 col-sm-4 col-md-4 col-lg-3">' .
+            '<label for="select_tags">Enter Keywords:<div style="font-size:11px;text-align:center;">(one keyword/phrase per line)</div></label>' .
+            '</div>' .
+            '<div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">' .
+            '<div class="input-xlarge input-inline">' .
+            '<textarea id="' . $ref_id . '_does_not"  class="'.$table_id.' form-control operand_text mx_dt_text_area"></textarea>' .
+            '</div>' .
+            '<div class="input-xlarge" style="margin-top: 5px;">' .
+            '<span class="pull-right">' .
+            '<a data-toggle="modal" href="#" class="btn mini add-from-manager" data-type="keywords" data-manager-type="tag-pages" data-source-selector="' . $ref_id . '_does_not" data-max-attr-allowed="5000"><i class="fa fa-bitbucket"></i> Import Keywords </a>' .
+            '</span>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '<div class="form-actions clearfix">' .
+            '<div class="col-md-offset-3 col-md-9 col-lg-offset-3 col-lg-9 margin-bottom-20">' .
+            '<button type="button" data-dismiss="modal" class="filter_now_from_contains_modal btn blue btn-med" table-id="' .$table_id . '" column-index="' . $column_index . '">Filter</button>' .
+            '<button type="button" data-dismiss="modal" class="btn default btn-med contains-multiple-close" table-id="' .$table_id . '" column-index="' . $column_index . '">Close</button>' .
+            '</div>' .
+            '</div>' .
+            '</div></div>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '</div>' .
+            '</div>';
+    }
+
+    protected function textFieldForNumber($ref_id, $select2_id, $table_id, $column_index)
+    {
+        return '<input type="text" id="' . $ref_id . '_1"  class="form-control operand_text" >' .
+            '<div id="number_filter_to_div' . $table_id . $column_index . '" style="display: none">' .
+            '<input type="text" id="' . $ref_id . '_2"  class="form-control operand_text" placeholder="To">' .
+            '</div>' .
+            "<script type='text/javascript'> $('#" . $select2_id . "').on('change', function () { var between_selected = 6; var selected_val = $('#" . $select2_id . "').val(); if (between_selected == selected_val) { $('#number_filter_to_div" . $table_id . $column_index . "').show('slow'); $('#" . $ref_id . "_1').attr('placeholder', 'From'); } else { $('#number_filter_to_div" . $table_id . $column_index . "').hide('slow'); $('#" . $ref_id . "_1').removeAttr('placeholder'); } });  </script>";
+    }
+
 
     private function replaceArrayKeys($original_array, $temp_array)
     {
@@ -1382,7 +1733,8 @@ class DrawTable implements DrawTableInterface
         } else {
             $toolbar_visibility = $this->toolbar_visibility;
         }
-        $content = view('mondovo.datatable.datatable-filter')->with(['table_id' => $table_id, 'toolbar_contents' => $this->toolbar_contents, 'toolbar_visibility' => $toolbar_visibility, 'predefined_filters_in_toolbar' => $this->predefined_filters_in_toolbar, 'export_button_visibility' => $this->export_button_visibility, 'export_report_name' => $this->export_report_name, 'export_report_date' => $this->export_report_date, 'export_strip_columns' => $this->export_strip_columns, 'excel_column_delimiter' => $this->excel_column_delimiter, 'keyword_group_filter' => $this->keyword_group_filter, 'operations' => $this->operations ]);
+
+        $content = view('mondovo.datatable.datatable-filter')->with(['table_id' => $table_id, 'toolbar_contents' => $this->toolbar_contents, 'toolbar_visibility' => $toolbar_visibility, 'predefined_filters_in_toolbar' => $this->predefined_filters_in_toolbar, 'export_button_visibility' => $this->export_button_visibility, 'export_report_name' => $this->export_report_name, 'export_report_date' => $this->export_report_date, 'export_strip_columns' => $this->export_strip_columns, 'excel_column_delimiter' => $this->excel_column_delimiter, 'keyword_group_filter' => $this->keyword_group_filter, 'operations' => $this->operations, 'column_filters' => $this->column_filters_html]);
 
         $this->html = $content;
 
@@ -1608,9 +1960,9 @@ class DrawTable implements DrawTableInterface
     {
         foreach ($column_array as $index => $col_details)
         {
-        	if(!is_array($col_details)){
-		        $index = $col_details;
-	        }
+            if(!is_array($col_details)){
+                $index = $col_details;
+            }
             $output_array[$i + $checkbox_col] =  explode('|', $index)[0];
 
             $i++;

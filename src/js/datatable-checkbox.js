@@ -11,7 +11,9 @@ var MvDataTableCheckboxDesign = {
         mv_select_all_records: 'mv_select_all_records',
         mv_clear_records: 'mv_clear_records',
         mv_hidden: 'hidden',
-        mv_tooltips: 'tooltips'
+        mv_tooltips: 'tooltips',
+        mv_fixed_column_wrapper: 'DTFC_ScrollWrapper',
+        mv_lazy_loading: 'lazy-loading-enabled'
     },
     All: 'All',
     No: 'No',
@@ -39,8 +41,11 @@ var MvDataTableCheckboxDesign = {
 var MvDataTableCheckbox = function () {
     var css_class = MvDataTableCheckboxDesign.CssClassCollection;
     var dataTableCheckedRecord = [];
+    var has_fixed_column = [];
+    var lazy_loading_enabled = [];
 
     var processCheckBox = function (self, table_id, row_index) {
+
         if (typeof dataTableCheckedRecord[table_id] == 'undefined') {
             return false;
         }
@@ -70,7 +75,6 @@ var MvDataTableCheckbox = function () {
         }
         uniqueValueInsert(self, table_id, row_index);
 
-        //console.log(dataTableCheckedRecord[table_id]);
         return true;
     };
 
@@ -134,6 +138,7 @@ var MvDataTableCheckbox = function () {
 
     var pageWiseCheckBox = function (self) {
         var table_id = getTableId(self);
+
         if (typeof dataTableCheckedRecord[table_id] == 'undefined') {
             return false;
         }
@@ -152,6 +157,112 @@ var MvDataTableCheckbox = function () {
         });
         putRecordsSelected(table_id);
     };
+
+    /* Written for fixed Columns by Nagaraj starts */
+
+    var fixedColIndividualCheckBox = function (current_table_id, self) {
+        //Bind to Original Table
+        let table_id = current_table_id;
+        if(!checkSelectedCheckBoxCount(self, table_id, false)){
+            return false;
+        }
+        var row_index = $(self).parents('tr').index();
+        processCheckBox(self, table_id, row_index);
+        putRecordsSelected(table_id);
+
+        var original_cbx = $("#" + table_id + " tbody tr").eq(row_index).find('td:eq(0) input');
+
+        if($(self).is(':checked')) {
+            original_cbx.prop('checked', true);
+            $(self).parent('span').addClass('checked');
+        } else {
+            $(self).parent('span').removeClass('checked');
+            original_cbx.prop('checked', false);
+        }
+        updateUniform(table_id);
+
+    };
+
+    var fixedColPageWiseCheckBox = function (current_table_id, self) {
+        let table_wrapper = current_table_id+'_wrapper';
+        let table_checkbox = $('#'+table_wrapper).find('.DTFC_LeftBodyWrapper table tbody tr');
+
+        let table_id = current_table_id; //For original table
+        let original_table_cbx_values = [];
+
+        if (typeof dataTableCheckedRecord[table_id] == 'undefined') {
+            return false;
+        }
+
+        if(lazy_loading_enabled[table_id]) {
+            if(getTotalRecords(table_id) === calculateNoOfRecordsChecked(table_id)) {
+                fixedColClearAllRecords(table_id, self);
+            } else {
+                fixedColSelectAllCheckbox(table_id, self);
+            }
+        } else {
+            $("#" + table_id + " tbody tr").each(function (index) {
+                if(!checkSelectedCheckBoxCount(self, table_id, false)){
+                    return false;
+                }
+                let original_ref = $(this).find('td:eq(0) input');
+                if (original_ref.is(':checked') !== $(self).is(':checked')) {
+                    original_ref.prop("checked", $(self).is(':checked'));
+                }
+                original_table_cbx_values.push(original_ref.is(':checked'));
+                return processCheckBox(original_ref, table_id, index);
+            });
+            putRecordsSelected(table_id);
+        }
+
+
+
+        //Make duplicated checkbox works
+        table_checkbox.each(function (index) {
+            if(!checkSelectedCheckBoxCount(self, table_id, false)){
+                return false;
+            }
+            let dup_ref = $(this).find('td:eq(0) input');
+            if (dup_ref.is(':checked') !== $(self).is(':checked')) {
+                dup_ref.prop("checked", original_table_cbx_values[index]);
+            }
+
+            if(dup_ref.is(':checked')) {
+                dup_ref.parent('span').addClass('checked');
+            } else {
+                dup_ref.parent('span').removeClass('checked');
+            }
+        });
+
+    }
+
+    var fixedColClearAllRecords = function (current_table_id, self) {
+        clearOrSelectAllRecords(current_table_id, false);
+        let table_wrapper = current_table_id+'_wrapper';
+        let table_checkbox = $('#'+table_wrapper).find('.DTFC_LeftBodyWrapper table tbody tr');
+        table_checkbox.each(function (index) {
+            let dref = $(this).find('td:eq(0) input');
+            dref.prop("checked", false);
+            dref.parent('span').removeClass('checked');
+        });
+    };
+    var fixedColSelectAllCheckbox = function (current_table_id, self) {
+        var table_id = current_table_id;
+        if(!checkSelectedCheckBoxCount(self, table_id, true)){
+            return false;
+        }
+        clearOrSelectAllRecords(table_id, true);
+
+        let table_wrapper = current_table_id+'_wrapper';
+        let table_checkbox = $('#'+table_wrapper).find('.DTFC_LeftBodyWrapper table tbody tr');
+        $('#'+table_wrapper).find('.mv_checkbox_page_wise').parent('span').addClass('checked');
+        table_checkbox.each(function (index) {
+            let dref = $(this).find('td:eq(0) input');
+            dref.prop("checked", true);
+            dref.parent('span').addClass('checked');
+        });
+    };
+    /* Written for fixed Columns by Nagaraj ends*/
 
     var checkSelectedCheckBoxCount = function(self, table_id, select_all) {
         var limit = $('#' + table_id).data('check-box-limit');
@@ -214,11 +325,24 @@ var MvDataTableCheckbox = function () {
         var total_records = getTotalRecords(table_id);
 
         var table_ref = $("#" + table_id);
-        var table_wrapper_ref = table_ref.parents('.table-scrollable');
+        var table_wrapper_ref = '';
+        if(has_fixed_column[table_id]) {
+            table_wrapper_ref = table_ref.closest("#" + table_id+'_wrapper').find('.DTFC_ScrollWrapper');
+        } else if(lazy_loading_enabled[table_id]) {
+            table_wrapper_ref = table_ref.closest("#" + table_id+'_wrapper').find('.dataTables_scrollHead');
+        } else {
+            table_wrapper_ref = table_ref.parents('.table-scrollable');
+        }
         if (records == 0) {
             //table_wrapper_ref.prev().remove();
             $("#" + table_id+"_wrapper .mv_records_toolbar").remove(); //Added by Nagaraj on 17th June, 2016 because when calling this function after ajax the global search bar and global records dropdown section was getting removed, this is to ensure only the speciic section is removed
-            table_wrapper_ref.find("." + css_class.mv_checkbox_page_wise).prop('checked', false);
+            if(has_fixed_column[table_id]) {
+                table_ref.closest('#'+table_id+'_wrapper').find("." + css_class.mv_checkbox_page_wise).prop('checked', false);
+                table_ref.closest('#'+table_id+'_wrapper').find("." + css_class.mv_checkbox_page_wise)
+                    .parent('span').removeClass('checked');
+            } else {
+                table_wrapper_ref.find("." + css_class.mv_checkbox_page_wise).prop('checked', false);
+            }
             updateUniform(table_id);
             return false;
         }
@@ -252,6 +376,19 @@ var MvDataTableCheckbox = function () {
         }
 
         table_ref.find("." + css_class.mv_checkbox_page_wise).prop('checked', countOfCheckedCheckbox(table_id) == calculationOfNoOfRecords(table_id));
+
+        if(has_fixed_column[table_id] || lazy_loading_enabled[table_id]) {
+            if(calculationOfNoOfRecords(table_id) == calculateNoOfRecordsChecked(table_id) || getTotalRecords(table_id) == calculateNoOfRecordsChecked(table_id)) {
+                table_ref.closest('#'+table_id+'_wrapper').find("." + css_class.mv_checkbox_page_wise).prop('checked', true);
+                table_ref.closest('#'+table_id+'_wrapper').find("." + css_class.mv_checkbox_page_wise)
+                    .parent('span').addClass('checked');
+            } else {
+                table_ref.closest('#'+table_id+'_wrapper').find("." + css_class.mv_checkbox_page_wise).prop('checked', false);
+                table_ref.closest('#'+table_id+'_wrapper').find("." + css_class.mv_checkbox_page_wise)
+                    .parent('span').removeClass('checked');
+            }
+        }
+
         updateUniform(table_id);
     };
 
@@ -262,7 +399,6 @@ var MvDataTableCheckbox = function () {
     var setKeyName = function (ajax_data, table_id) {
         if (typeof dataTableCheckedRecord[table_id] == 'undefined') {
             dataTableCheckedRecord[table_id] = {};
-            registerEvents(table_id);
         }
 
         if (typeof dataTableCheckedRecord[table_id]['columns'] == 'undefined') {
@@ -287,6 +423,7 @@ var MvDataTableCheckbox = function () {
 
     var drawCallbackDatatable = function (table_id, column_names) {
         var firstSignal = 0;
+        registerEvents(table_id);
 
         if (typeof dataTableCheckedRecord[table_id] == 'undefined') {
             setKeyName('', table_id);
@@ -316,7 +453,6 @@ var MvDataTableCheckbox = function () {
                 checked_checkbox++;
             }
         });
-
         return checked_checkbox;
     };
 
@@ -368,6 +504,12 @@ var MvDataTableCheckbox = function () {
 
         traverseAllCheckbox(table_id);
         putRecordsSelected(table_id);
+
+        //Added for fixed column dup checkbox select
+        if(getTotalRecords(table_id) == calculateNoOfRecordsChecked(table_id)) {
+            $('#'+table_id+'_wrapper').find('.mv_checkbox_page_wise').parent('span').addClass('checked');
+        }
+
     };
 
     var getAjaxUrl = function (table_id) {
@@ -714,25 +856,51 @@ var MvDataTableCheckbox = function () {
     };
 
     var registerEvents = function (table_id) {
+        let table_instance = $('#' + table_id);
+        let table_instance_wrapper = table_id+'_wrapper';
+        has_fixed_column[table_id] = ($('.'+css_class.mv_fixed_column_wrapper).length > 0);
+        lazy_loading_enabled[table_id] = ($('.'+css_class.mv_lazy_loading).length > 0);
+
+        /* if(has_fixed_column[table_id]) {
+             $('.dataTables_sizing').remove();
+             $('.column_filter_condition').addClass('fixed-now')
+         }*/
+
 
         if(typeof $('#' + table_id).DataTable().scroller == 'undefined') {
 
             $(document).on('click', "#" + table_id + " ." + css_class.mv_checkbox_page_wise, function () {
                 pageWiseCheckBox(this);
             });
-        }else {
-
+        } else if(has_fixed_column[table_id] || lazy_loading_enabled[table_id]) {
+            $(document).off('click','#'+table_instance_wrapper+ ' .mv_checkbox_page_wise')
+                .on('click', '#'+table_instance_wrapper+ ' .mv_checkbox_page_wise' ,function () {
+                    fixedColPageWiseCheckBox(table_id, this);
+                });
+        }
+        else {
             $('#' + table_id).parent().parent().find('.' + css_class.mv_checkbox_page_wise).on('click', function () {
                 pageWiseCheckBox(this);
             });
         }
 
-        $(document).on('click', "#" + table_id + " ." + css_class.mv_checkbox, function () {
-            individualCheckBox(this);
-        });
+        if(has_fixed_column[table_id]) {
+            $('#'+table_instance_wrapper).find('.'+css_class.mv_checkbox).on('click', function () {
+                fixedColIndividualCheckBox(table_id, this);
+            });
+        } else {
+            $(document).on('click', "#" + table_id + " ." + css_class.mv_checkbox, function () {
+                individualCheckBox(this);
+            });
+        }
+
 
         $(document).on('click', "#" + table_id + "_wrapper ." + css_class.mv_select_all_records, function () {
-            selectAllCheckbox(this);
+            if(has_fixed_column[table_id]) {
+                fixedColSelectAllCheckbox(table_id, this);
+            } else {
+                selectAllCheckbox(this);
+            }
         });
 
         $(document).on('click', "#" + table_id + "_wrapper ." + css_class.mv_clear_records, function () {
@@ -740,7 +908,11 @@ var MvDataTableCheckbox = function () {
             if (typeof attr !== typeof undefined && attr !== false) {
                 $(this).tooltip('destroy');
             }
-            clearAllRecords(this);
+            if(has_fixed_column[table_id]) {
+                fixedColClearAllRecords(table_id, this);
+            } else {
+                clearAllRecords(this);
+            }
         });
 
         $("#" + table_id + "_wrapper .dataTables_filter label input").unbind();
@@ -898,6 +1070,12 @@ var MvDataTableCheckbox = function () {
         }
     };
 
+    var destroyTable = function (table_id) {
+        MvDataTableFilter.datatableClearAllFilter(table_id);
+        MvDataTableCheckbox.resetKeyNames(table_id);
+        $('#' + table_id).DataTable().destroy();
+    };
+
     return {
         dataTableCheckedRecord: dataTableCheckedRecord,
         drawCallbackDatatable: function (table_id, column_names) {
@@ -970,6 +1148,9 @@ var MvDataTableCheckbox = function () {
         },
         selectFirstNRows: function(table_id, count){
             return selectFirstNRows(table_id, count);
+        },
+        destroyTable: function(table_id){
+            return destroyTable(table_id);
         }
     }
 

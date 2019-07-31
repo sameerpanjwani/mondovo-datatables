@@ -15,6 +15,9 @@ var MvDataTableFilterDesign = {
         operator_select: 'operator_select',
         operand_text: 'operand_text',
         filter_now: 'filter_now',
+        apply_filter: 'apply-filter',
+        add_filter: 'add-filter',
+        hide_table_filter: 'hide-table-filter',
         filter_now_from_contains_modal: 'filter_now_from_contains_modal',
         open_contains_multiple_modal: 'open_contains_multiple_modal',
         open_does_not_contain_multiple_modal: 'open_does_not_contain_multiple_modal',
@@ -483,8 +486,8 @@ var MvDataTableFilter = function () {
         }
 
 
-        $(attribute_to_traverse + " thead tr th").each(function () {
-            var table_id = $(this).closest("table").attr("id");
+        $("table thead tr th").each(function () {
+            var table_id = tableId;//$(this).closest("table").attr("id");
             var filter_added_signal = $(this).data('filter_added');
 
             if (typeof filter_added_signal != 'undefined') {
@@ -1306,14 +1309,22 @@ var MvDataTableFilter = function () {
         });
 
         //  Filter dropdown click outside close
-        $("." + css_class.column_filter_container).off('click');
-        $("." + css_class.column_filter_container).click(function (event) {
+        $(document).off('click', "." + css_class.column_filter_container).on("click", "." + css_class.column_filter_container, function (event) {
             stopTableSorting(event);
         });
 
         $("." + css_class.column_filter_btn).off('click');
         $("." + css_class.column_filter_btn).click(function (e) {
-            $(this).closest("table").find("." + css_class.column_filter_container).removeClass("open");
+
+            let col_index = $(this).closest('th').index();
+            let table_wrapper_id = $(this).closest("div[id$='_wrapper']").attr("id");
+            let table_id = table_wrapper_id.replace('_wrapper', '');
+
+            let original_table_col = $('#'+table_id+' thead th').eq(col_index);
+            original_table_col.siblings('th').find('.column_filter_container').removeClass('open');
+            original_table_col.find('.column_filter_container').addClass('open');
+
+            $(this).closest('#'+table_wrapper_id).find("." + css_class.column_filter_container).removeClass("open");
             var obj_ref = $(this).parent("." + css_class.column_filter_container);
             obj_ref.addClass("open");
             obj_ref.find("." + css_class.column_filter_condition + " li:eq(1)").show();
@@ -1321,28 +1332,54 @@ var MvDataTableFilter = function () {
             stopTableSorting(e);
         });
 
-        $("." + css_class.filter_now).off("click");
-        $("." + css_class.filter_now).click(function () {
-            $(this).parents("." + css_class.column_filter_container).removeClass("open");
-            var tableId = $(this).attr("tableId");
-            datatableColumnFilterNow(this, tableId);
+        $("." + css_class.column_filter_condition).click(function (e) {
+            if($(e.target).hasClass('filter_now')){
+                return;
+            }
+            if($(e.target).hasClass('close_filter')){
+                $(this).parents("." + css_class.column_filter_container).removeClass("open");
+            }
+            stopTableSorting(e);
         });
 
-        $("." + css_class.filter_now_from_contains_modal).off("click");
-        $("." + css_class.filter_now_from_contains_modal).click(function () {
-            var tableId = $(this).attr("table-id");
-            var columnIndex = $(this).attr("column-index");
-            var filter_now_button_id = tableId + '_filter_now_' + columnIndex;
-            $('#' + filter_now_button_id).click();
-        });
+        $(document).off('click', "." + css_class.filter_now)
+            .on('click', "." + css_class.filter_now, function () {
+                $(this).parents("." + css_class.column_filter_container).removeClass("open");
+                var tableId = $(this).attr("tableId");
+                datatableColumnFilterNow(this, tableId);
+                //applyFilterClassNew(tableId);
+            });
 
-        $("." + css_class.contains_multiple_close).off("click");
-        $("." + css_class.contains_multiple_close).click(function () {
-            var tableId = $(this).attr("table-id");
-            var columnIndex = $(this).attr("column-index");
-            var operator_select = tableId + 'Operator' + columnIndex;
-            $('#' + operator_select).prop('selectedIndex',0);
-        });
+        $(document).off('click', "." + css_class.apply_filter)
+            .on('click', "." + css_class.apply_filter, function () {
+                applyFilter($(this).attr('tableId'));
+            });
+
+        $(document).off('click', "." + css_class.add_filter)
+            .on('click', "." + css_class.add_filter, function () {
+                showTableColumnFilters($(this).attr('tableId'));
+            });
+
+        $(document).off('click', "." + css_class.hide_table_filter)
+            .on('click', "." + css_class.hide_table_filter, function () {
+                hideMailTableColumnFilters($(this).attr('tableId'));
+            });
+
+        $(document).off('click', "." + css_class.filter_now_from_contains_modal)
+            .on('click', "." + css_class.filter_now_from_contains_modal, function () {
+                var tableId = $(this).attr("table-id");
+                var columnIndex = $(this).attr("column-index");
+                var filter_now_button_id = tableId + '_filter_now_' + columnIndex;
+                $('#' + filter_now_button_id).click();
+            });
+
+        $(document).off('click', "." + css_class.contains_multiple_close)
+            .on('click', "." + css_class.contains_multiple_close, function () {
+                var tableId = $(this).attr("table-id");
+                var columnIndex = $(this).attr("column-index");
+                var operator_select = tableId + 'Operator' + columnIndex;
+                $('#' + operator_select).prop('selectedIndex',0);
+            });
 
         $(document).off("click", "." + css_class.open_contains_multiple_modal);
         $(document).on('click', "." + css_class.open_contains_multiple_modal, function (event) {
@@ -1355,21 +1392,22 @@ var MvDataTableFilter = function () {
             $('#contains_multiple_modal_for_' + contains_modal_id_part).modal();
         });
 
-        $(document).off("click", "." + css_class.open_does_not_contain_multiple_modal);
-        $(document).on('click', "." + css_class.open_does_not_contain_multiple_modal, function (event) {
-            var table_id = $(this).attr('table-id');
-            var column_index = $(this).attr('column-index');
-            var contains_modal_id_part = table_id + 'FilterTextArea' + column_index;
-            var operator_select_id = table_id + 'Operator' + column_index;
+        $(document).off("click", "." + css_class.open_does_not_contain_multiple_modal)
+            .on('click', "." + css_class.open_does_not_contain_multiple_modal, function (event) {
+                var table_id = $(this).attr('table-id');
+                var column_index = $(this).attr('column-index');
+                var contains_modal_id_part = table_id + 'FilterTextArea' + column_index;
+                var operator_select_id = table_id + 'Operator' + column_index;
 
-            $("#" + operator_select_id + " option:contains(Does not contain (multiple))").attr('selected', 'selected');
-            $('#does_not_contain_multiple_modal_for_' + contains_modal_id_part).modal();
-        });
+                $("#" + operator_select_id + " option:contains(Does not contain (multiple))").attr('selected', 'selected');
+                $('#does_not_contain_multiple_modal_for_' + contains_modal_id_part).modal();
+            });
 
-        $("." + css_class.close_filter).off('click');
-        $("." + css_class.close_filter).click(function () {
-            $(this).parents("." + css_class.column_filter_container).removeClass("open");
-        });
+        $(document).off("click", "." + css_class.close_filter)
+            .on("click", "." + css_class.close_filter, function (e) {
+                $(this).parents("." + css_class.column_filter_container).removeClass("open");
+                stopTableSorting(e);
+            });
 
         $('.' + css_class.operator_select).off('click');
         $('.' + css_class.operator_select).change(function () {
@@ -1399,8 +1437,7 @@ var MvDataTableFilter = function () {
         });
 
         //Delete all events already assigned to $('.export-datatable')
-        $('.export-datatable').off();
-        $('.export-datatable').click(function () {
+        $(document).off("click", '.export-datatable').on("click", '.export-datatable', function () {
             initiateExport(this);
         });
 
@@ -1592,6 +1629,8 @@ var MvDataTableFilter = function () {
 
                     if(MvDataTableFilterDesign.clearAllFilterCallback)
                         MvDataTableFilterDesign.clearAllFilterCallback();
+
+                    $("#" + table_id + "_filter").hide();
                 }
             });
         });
@@ -2531,7 +2570,6 @@ var MvDataTableFilter = function () {
     };
 
     var datatableColumnFilterNow = function (self, table_id, redraw, column_to_hide, data_filter_id) {
-        debug.log(self);
         if (MvDataTableCheckbox.isAnyItemChecked(table_id)) {
             MvDataTableCheckbox.filterNowHandler(table_id, self);
             return false;
@@ -2549,6 +2587,9 @@ var MvDataTableFilter = function () {
         //detect if flag set, then hide thos columns again
 
         var column_index = checkColIndex(th_ref);
+        if(column_index < 0){
+            var column_index = checkColIndex(self);
+        }
         debug.log(column_index);
         var operator_ref = $("#" + table_id + "Operator" + column_index);
         var datetime_ref = $("#" + table_id + "FilterDateTime" + column_index);
@@ -2566,7 +2607,10 @@ var MvDataTableFilter = function () {
 
         var column_title = checkTitle(th_ref);
         if (!column_title) {
-            return false;
+            var column_title = checkTitle(self);
+            if (!column_title) {
+                return false;
+            }
         }
 
         var operator_index_value = operator_ref.val();
@@ -2581,6 +2625,7 @@ var MvDataTableFilter = function () {
         var column_value = '';
         var search_value = '';
         var all_values = '';
+
 
         if (filter_type == 'date') {
             column_value = datetime_ref.val();
@@ -2664,7 +2709,9 @@ var MvDataTableFilter = function () {
         if (typeof columns[operator_value] == 'undefined') {
             columns[operator_value] = [];
             /* First time with this operator */
-            $("#" + table_id + "_filter ." + css_class.filter_conditions_container).append(MvDataTableFilterDesign.AndField(column_title, operator_value, column_value, column_index, table_id, operator_index_value, data_filter_id, all_values));
+            let filter_text_val = MvDataTableFilterDesign.AndField(column_title, operator_value, column_value, column_index, table_id, operator_index_value, data_filter_id, all_values);
+            $("#" + table_id + "_filter ." + css_class.filter_conditions_container).append(filter_text_val);
+            $('#' + table_id + '-' + column_index + '-alerts-tag').append(filter_text_val);
         }
         else if (operator_value != "Is Empty" && operator_value != "Is Not Empty") {
             var filter_condition_ref = $("#" + table_id + "_filter ." + css_class.filter_conditions_container + " ." + css_class.and_column_input + column_index + operator_index_value);
@@ -2693,9 +2740,13 @@ var MvDataTableFilter = function () {
             }
 
             if (operator_value == "Contains (multiple)" || operator_value == "Does not contain (multiple)") {
-                filter_condition_ref.find("." + css_class.and_column_value).parent().parent().html(MvDataTableFilterDesign.AndField(column_title, operator_value, column_value, column_index, table_id, operator_index_value, data_filter_id, all_values));
+                let filter_text_val = MvDataTableFilterDesign.AndField(column_title, operator_value, column_value, column_index, table_id, operator_index_value, data_filter_id, all_values);
+                filter_condition_ref.find("." + css_class.and_column_value).parent().parent().html(filter_text_val);
+                $('#' + table_id + '-' + column_index + '-alerts-tag').html(filter_text_val);
             }else {
-                filter_condition_ref.find("." + css_class.and_column_value).parent().append(MvDataTableFilterDesign.OrField(column_value));
+                let filter_text_val = MvDataTableFilterDesign.OrField(column_value);
+                filter_condition_ref.find("." + css_class.and_column_value).parent().append(filter_text_val);
+                $('#' + table_id + '-' + column_index + '-alerts-tag').append(filter_text_val);
             }
 
         }
@@ -2707,7 +2758,7 @@ var MvDataTableFilter = function () {
 
         /* formation of final array */
         if (operator_value == "Contains (multiple)" || operator_value == "Does not contain (multiple)"){
-            columns[operator_value].splice(0, 1, {search_value: search_value, concat_columns: concat_columns, all_values: all_values})
+            columns[operator_value].splice(0, 1, {search_value: search_value, concat_columns: concat_columns, all_values: all_values});
         }else{
             columns[operator_value].push({search_value: search_value, concat_columns: concat_columns, all_values: all_values});
         }
@@ -2722,20 +2773,21 @@ var MvDataTableFilter = function () {
         number_ref_2.val('');
         text_ref.val('');
 
-        if (dataTableFilterRecord[table_id].hasOwnProperty(column_index)) {
+
+        /*if (dataTableFilterRecord[table_id].hasOwnProperty(column_index)) {
             $("#" + table_id + "_filter").show();
         }
         else {
             $("#" + table_id + "_filter").hide();
-        }
+        }*/
 
         if (MvDataTableCheckbox.isNotAjax(table_id)) {
             pushFilteringConditionForNonAjax(table_id);
         }
 
-        if (redraw) {
+        /*if (redraw) {
             redrawTable(table_id);
-        }
+        }*/
 
         if (column_to_hide > 0) {
             var table_ref = $("#" + table_id).DataTable();
@@ -2749,6 +2801,22 @@ var MvDataTableFilter = function () {
             self_ref.last_filter_applied_column_index[table_id] = [column_index];
         }
 
+        //console.log('HERE', self);
+        //addTableColumnFilter(self);
+
+    };
+
+    var applyFilter = function(table_id){
+        $("#" + table_id + "_filter").show();
+        redrawTable(table_id);
+    };
+
+    var showTableColumnFilters = function(table_id) {
+        $('#' + table_id + '_filter_overlay').show();
+    };
+
+    var hideMailTableColumnFilters = function (table_id){
+        $('#' + table_id + '_filter_overlay').hide();
     };
 
     var applyFilterClass = function (table_id) {
@@ -3057,7 +3125,7 @@ var MvDataTableFilter = function () {
         dataTableFilterRecord: dataTableFilterRecord,
         postFilterClearCallback: post_filter_clear_callback,
         init: function () {
-            drawIndividualColumnFilter();
+            //drawIndividualColumnFilter(); //Not required hence we are calling  from data table js blade
             registerEvents();
             ajaxCallManagers();
             getKeywordDifficultyModal();
@@ -3177,24 +3245,30 @@ var MvDataTableFilter = function () {
             var checkbox_id = $(element).data('checkbox-id');
             var class_name = $(element).data('toggle-class');
             var table_id = $(element).data('table-id');
+            var table = $('#' + table_id).DataTable();
             var visible_status = 'show';
 
             if ($('#' + checkbox_id).is(":checked") == true) {
+
+                $('#'+checkbox_id).prop('checked', false);
                 visible_status = 'hide';
-            }
 
-            MvDataTableFilter.processToggleTableColumnVisibility(table_id, class_name, visible_status);
-        },
-        processToggleTableColumnVisibility: function(table_id, class_name, visible_status) {
-            if($('#' + table_id).length < 1){
-                return;
-            }
+                if (class_name.indexOf('_parent') > 0) {
+                    class_name = class_name.replace("_parent", "_child");
+                    var table_child_columns = table.columns('.' + class_name).header().flatten().to$();
 
-            var table = $('#' + table_id).DataTable();
-            var class_name_org = class_name;
-            if(visible_status === 'show')
-            {
-                $('#'+class_name).prop('checked', true);
+                    $(table_child_columns).addClass('parent-hidden');
+                    table.columns('.' + class_name).visible(false,false);
+
+                } else {
+
+                    table.columns('.' + class_name).visible(false,false).header().flatten().to$().addClass('default-hidden');
+                }
+
+            } else {
+
+                $('#'+checkbox_id).prop('checked', true);
+
                 if (class_name.indexOf('_parent') > 0) {
 
                     //This is to handle the situation of hiding columns that are not hidden by default and where there are multiple children columns
@@ -3209,7 +3283,7 @@ var MvDataTableFilter = function () {
                     table.columns('.default-hidden').visible(false,false);
                     var class_contents = $(table_child_columns).attr('class');
                     var col_group_name = class_contents.match(/(col-group-)\d/g);
-                    if (col_group_name != null && col_group_name[0] != "") {
+                    if (col_group_name[0] != "") {
 
                         var col_group_number = parseInt(col_group_name[0].replace("col-group-", ""));
 
@@ -3219,25 +3293,11 @@ var MvDataTableFilter = function () {
                     table.columns('.' + class_name).header().flatten().to$().removeClass('default-hidden'); //we remove the class default-hidden for all columns including the parent-hidden so that it can be shown again if made visible later
                     table.columns('.' + class_name + ':not(.parent-hidden)').visible(true,false); //we are removinv the class as well so that it will show after a table redraw as well, since we're hididng based on the condition of the class being present/absent in datatable-js.blade.php
                 }
-
-            }else{
-                $('#'+class_name).prop('checked', false);
-                if (class_name.indexOf('_parent') > 0) {
-                    class_name = class_name.replace("_parent", "_child");
-                    var table_child_columns = table.columns('.' + class_name).header().flatten().to$();
-
-                    $(table_child_columns).addClass('parent-hidden');
-                    table.columns('.' + class_name).visible(false,false);
-
-                } else {
-
-                    table.columns('.' + class_name).visible(false,false).header().flatten().to$().addClass('default-hidden');
-                }
             }
             MvDataTableFilter.adjustOddEvenColumns(table_id);
             var save_visibility_function_name = 'saveVisibilityState_' + table_id;
             if(typeof save_view_state_callback[table_id] !== 'undefined'){
-                save_view_state_callback[table_id](visible_status, table_id, class_name_org);
+                save_view_state_callback[table_id](visible_status, table_id, class_name);
             }
             //table.columns.adjust().draw( false );
             //hide the loader here
@@ -3553,3 +3613,139 @@ function make_array(data_object) {
 
     return data_array;
 }
+
+/*function showTableColumnFilters(elm) {
+    $('.table-overlay').show();
+    let table_id = $(elm).parent('.mv-table-custom-filter').siblings('.dataTables_wrapper').find('table').attr('id');
+    localStorage.setItem('currentFilterTableId', table_id);
+}
+$(document).on('click', '.global-filter-btn', function () {
+    if(($(this).closest('.panel.panel-default').find('input').val()) !== ''){
+        $(this).closest('.panel.panel-default').find('.panel-title .filter-line').hide();
+        $(this).closest('.panel.panel-default').find('.panel-title .filter-solid').show();
+    }
+});
+var mvDataTableColumns = [
+    {
+        name: "Alert Content",
+        type: 'text'
+    },
+    {
+        name: "Module Name",
+        type: 'select'
+    }
+]
+var mvDataTableFilters = {
+    text: ["=", "Not Equals", "Contains", "Does not contain", "Contains (multiple)", "Does not contain (multiple)", "Starts With", "Ends With", "Is Empty", "Is Not Empty"],
+    select: ["=", "Not Equals"],
+    filter: ['In Tags', 'In Keywords', 'In Pages', 'Is of', 'Not In Tags', 'Not In Keywords', 'Not In Pages'],
+    number: ['=', "Not Equals", "&lt;", "&gt;", "&lt;=", "&gt;=", "Between", "Is Empty", "Is Not Empty"],
+    all: ["=", "Not Equals", "Contains", "Does not contain", "&lt;", "&gt;", "&lt;=", "&gt;=", "Is Empty", "Is Not Empty"]
+};
+
+var filter_name='';
+$.each(mvDataTableColumns, function(key, value){
+    var currentFilterTableId = localStorage.getItem('currentFilterTableId');
+    var options_list = '';
+
+    if(value.type == 'text'){
+        $.each(mvDataTableFilters.text, function(key_select, value_select){
+            options_list += "<option value='"+key_select+"'>"+value_select+"</option>";
+        });
+    }else if(value.type == 'select'){
+        $.each(mvDataTableFilters.select, function(key_select, value_select){
+            options_list += "<option value='"+key_select+"'>"+value_select+"</option>";
+        });
+    }else if(value.type == 'filter'){
+        $.each(mvDataTableFilters.filter, function(key_select, value_select){
+            options_list += "<option value='"+key_select+"'>"+value_select+"</option>";
+        });
+    }else if(value.type == 'number'){
+        $.each(mvDataTableFilters.number, function(key_select, value_select){
+            options_list += "<option value='"+key_select+"'>"+value_select+"</option>";
+        });
+    }else{
+        $.each(mvDataTableFilters.all, function(key_select, value_select){
+            options_list += "<option value='"+key_select+"'>"+value_select+"</option>";
+        });
+    }
+
+    filter_name += "<div class='panel panel-default filtered'>" +
+        "<a role='button' class='collapsable-a' data-toggle='collapse' data-parent='#accordion' href='#collapse"+currentFilterTableId+key+"' aria-expanded='true' aria-controls='collapseOne'>" +
+        "   <div class='panel-heading' role='tab' id='heading"+currentFilterTableId+key+"'>" +
+        "       <h4 class='panel-title'>" +
+        "           <svg>" +
+        "               <use class='filter-line' xlink:href='/img//svg-sprites/manage-alerts.svg#filter-line'></use>" +
+        "               <use class='filter-solid' style='display: none' xlink:href='/img//svg-sprites/manage-alerts.svg#filter-solid'></use>" +
+        "           </svg>" +
+        "           " +value.name+
+        "       </h4>" +
+        "       <div class='alerts-tag'> </div>" +
+        "    </div>" +
+        "</a>" +
+        "<div id='collapse"+currentFilterTableId+key+"' class='panel-collapse collapse' role='tabpanel' aria-labelledby='heading"+currentFilterTableId+key+"'>" +
+        "   <div class='panel-body'>" +
+        "       <div class='form-group margin-bottom-0'><form>" +
+        "           <select class='form-control margin-top-bottom-sm'>" +options_list+"</select>" +
+        "           <input type='text' class='form-control' name='filter_name'>" +
+        "           <div>" +
+        "               <button type='button' class='close_filter btn default btn-med' onclick='hideTableColumnFilters(this)'>Close</button>" +
+        "               <button type='button' class='btn blue btn-med global-filter-btn' onclick='addTableColumnFilter(this)'>Add Filter</button>" +
+        "           </div></form>" +
+        "        </div>" +
+        "   </div>" +
+        "</div>" +
+    "</div>";
+});
+function addTableColumnFilter(elm){
+    let filer_display_div = $(elm).closest('.panel-collapse').siblings('a').find('.alerts-tag').html();
+    let select_box_text = $(elm).closest('.panel-collapse').find('select option:selected').text();
+    let input_box_text = $(elm).closest('.panel-collapse').find('input').val();
+    if(select_box_text != '' && input_box_text != ''){
+        let form_display_filter = "<div class='input-text'>"+select_box_text+" : <strong>"+input_box_text+"</strong></div>";
+        $(elm).closest('.panel-collapse').siblings('a').find('.alerts-tag').html(filer_display_div+form_display_filter);
+    }
+    $(elm).closest('.panel-collapse').find('input').val('');
+    $(elm).closest('.panel-collapse').find('select option:first-child').attr('selected', 'selected');
+    filterChildrenCount(elm);
+}
+function hideMailTableColumnFilters(elm){
+    localStorage.removeItem('currentFilterTableId');
+    $(elm).closest('.table-overlay').hide();
+    $(elm).siblings('.filter-container').find('.alerts-tag').html('');
+    $(elm).siblings('.filter-container').find('.filter-line').show();
+    $(elm).siblings('.filter-container').find('.filter-solid').hide();
+    $(elm).siblings('.filter-container').find('.panel.panel-default').removeClass('filtered');
+    //$(elm).siblings('.filter-container').find('form').each(function() { this.reset() });
+    if($(elm).siblings('.filter-container').find('.panel-default .collapse').hasClass('in')){
+        $(elm).siblings('.filter-container').find('.panel-default .collapse').removeClass('in');
+        $(elm).siblings('.filter-container').find('.panel-default>.collapsable-a').addClass('collapsed');
+    }
+}
+function hideTableColumnFilters(elm){
+    $(elm).closest('.panel-collapse').siblings('a').find('.alerts-tag').html('');
+    $(elm).closest('.table-overlay').hide();
+    localStorage.removeItem('currentFilterTableId');
+    $(elm).closest('.panel.panel-default').find('.filter-line').show();
+    $(elm).closest('.panel.panel-default').find('.filter-solid').hide();
+    $(elm).closest('.table-overlay').find('form').each(function() { this.reset() });
+    if($(elm).closest('.panel-default').find('.collapse').hasClass('in')){
+        $(elm).closest('.panel-default').find('.collapse').removeClass('in');
+        $(elm).closest('.panel-default').find('.collapsable-a').addClass('collapsed');
+    }
+    filterChildrenCount(elm);
+}
+function filterChildrenCount(elm){
+    let filter_count = $(elm).closest('.panel-collapse').siblings('a').find('.alerts-tag').children().length;
+    if(filter_count > 0){
+        $(elm).closest('.panel.panel-default').addClass('filtered');
+        $(elm).closest('.panel.panel-default.filtered').find('.panel-title .filter-line').hide();
+        $(elm).closest('.panel.panel-default.filtered').find('.panel-title .filter-solid').show();
+    }else{
+        $(elm).closest('.panel.panel-default').removeClass('filtered');
+        $(elm).closest('.panel.panel-default').find('.panel-title .filter-line').show();
+        $(elm).closest('.panel.panel-default').find('.panel-title .filter-solid').hide();
+    }
+}*/
+
+

@@ -26,11 +26,13 @@ pageLength:<?=$data_rows;?>,
 <?php if($loading_on_scroll == 'yes'){ ?>
 dom: "frtiS",
 scrollX: true,
-scrollY: <?=$scroll_y;?>,
+scrollY: '<?=$scroll_y;?>',
 deferRender: true,
 scroller: {
 loadingIndicator: true
 },
+
+
 <?php } ?>
 searching: {{ $searching }},
 paging: {{ $paging }},
@@ -50,6 +52,7 @@ MvDataTableFilter.datatableClearAllFilter("{{$table_id}}");
 }
 $("#{{$table_id}}").css("opacity",0.5);
 $("#{{$table_id}}_processing").html('<button class="btn"><i class="fa fa-spinner fa-spin"></i> Loading the table\'s contents</button>').css('position','absolute');
+//$('#{{$table_id}}_wrapper').mondovoLogoLoader({loaderType:'block', loaderSize:'small', loaderText: 'Please Wait'});
 
 },
 serverSide: true,
@@ -69,6 +72,7 @@ order:  <?= $js_order ?>,
 <?php } ?>
 drawCallback: function( settings ) {
 $("#{{$table_id}}").css("opacity",1);
+//$('#{{$table_id}}_wrapper').mondovoLogoLoader('close');
 MvDataTableCheckbox.drawCallbackDatatable("{{$table_id}}", <?= $checkbox_columns ?>);
 MvDataTableCheckbox.insertUniform("{{$table_id}}");
 MvDataTableCheckbox.insertIntoCheckboxControlsExtraText("{{$table_id}}", "{{$checkbox_control_text}}");
@@ -88,7 +92,7 @@ MvDataTableFilter.adjustOddEvenColumns('{{$table_id}}');
 @if(!is_bool($text_selector_filter))
     TextSelectorFilter.init('{{$table_id}}', '{{$text_selector_filter}}');
 @endif
-setTimeout(function(){ $("#{{$table_id}}_wrapper").find('input[type=search]').prop('disabled', false); }, 1300);
+setTimeout(function(){ $("#{{$table_id}}_wrapper").find('input[type=search]').prop('disabled', false); MvDataTableFilter.registerSubEvents();}, 1300);
 
 },
 bWidth: false,
@@ -117,6 +121,7 @@ foreach($datatable_fixed_columns_objects as $key=>$value)
     $count_of_variable--;
 }
 ?>
+,scrollX: true
 ,fixedColumns: {
 {{$string_for}}
 }
@@ -127,8 +132,8 @@ foreach($datatable_fixed_columns_objects as $key=>$value)
 });
 $("#{{$table_id}}").data("ajax_retry", 0);
 var ajax_request = "{{$ajax_request}}";
+MvDataTableFilter.initializeSpecificTableId('{{$table_id}}');//this is done so as to re-initialize the filters // For fixing fixed column
 if(ajax_request=="is_ajax"){
-MvDataTableFilter.initializeSpecificTableId('{{$table_id}}');//this is done so as to re-initialize the filters
 MvDataTableCheckbox.clearOrSelectAllRecords('{{$table_id}}', false); // This is done so as to clear all the checkboxes if selected before ajax call
 }
 //console.log("For table id: "+{{$table_id}}+" the ajax request is "+ajax_request);
@@ -138,7 +143,7 @@ before_first_request_{{$table_id}} = false;
 $('#{{$table_id}}').parents('.mv-box-layout').addClass('mv-box-layout-pdf');
 <?php } ?>
 @if($visibility_set_callback != "")
-    {!! $visibility_set_callback !!}
+    {!! $visibility_set_callback !!};
 @endif
 @if($visibility_save_call_back != "")
     MvDataTableFilter.updateSaveViewStateCallback('{{$table_id}}', {!! $visibility_save_call_back !!});

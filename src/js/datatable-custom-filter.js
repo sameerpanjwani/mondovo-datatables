@@ -2994,6 +2994,7 @@ var MvDataTableFilter = function () {
             },
             success: function (response) {
                 this.mySuccess();
+                MvDataTableFilterDesign.shouldRefreshKgData = false;
                 progress_bar.val(100);
                 clearInterval(interval);
                 progress_bar.val(0);

@@ -59,6 +59,7 @@ var MvDataTableFilterDesign = {
     exportReportFailureMessage: "Sorry, unable to export the report",
     managerGuestUserErrorMessage: "Please login/register to access this feature",
     clearAllFilterCallback: false,
+    shouldRefreshKgData: false,
 
     ColumnFilter: function (tableId, column_index) {
         return '<div  class="column_filter_container dropdown">' +
@@ -1293,7 +1294,7 @@ var MvDataTableFilter = function () {
 
             var list_exist = $(this).find('div.keyword-group-wrapper').length > 0;
 
-            if(list_exist)
+            if(list_exist && !MvDataTableFilterDesign.shouldRefreshKgData)
             {
                 return;
             }

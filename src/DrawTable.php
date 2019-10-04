@@ -8,6 +8,7 @@
 
 namespace Mondovo\DataTable;
 
+use Illuminate\Support\Str;
 use Request;
 use Mondovo\DataTable\Contracts\DrawTableInterface;
 use Mondovo\DataTable\Exceptions\UnsupportedTypeException;
@@ -614,7 +615,7 @@ class DrawTable implements DrawTableInterface
         $attribute_values = "";
         $style_values = "";
 
-        if (str_contains($attributes_string, $this->getDelimiter())) {//means multiple attributes to process
+        if (Str::contains($attributes_string, $this->getDelimiter())) {//means multiple attributes to process
 
             $attribute_components = explode($this->getDelimiter(), $attributes_string);
 
@@ -941,7 +942,7 @@ class DrawTable implements DrawTableInterface
     public function setTableClasses($table_class_names)
     {
         //check if "o:" has been prefixed in the class, then we'll want to over-write
-        if (str_contains($table_class_names, "o:")) {
+        if (Str::contains($table_class_names, "o:")) {
             $this->default_datatable_class_names = str_replace("o:", "", $table_class_names);
             return $this;
         }
@@ -1199,7 +1200,7 @@ class DrawTable implements DrawTableInterface
      */
     private function hasCustomAttributes($column_string)
     {
-        return str_contains($column_string, $this->getDelimiter());
+        return Str::contains($column_string, $this->getDelimiter());
     }
 
     /**

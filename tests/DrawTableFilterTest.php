@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 /**
  * Created by PhpStorm.
  * User: Sameer
@@ -68,7 +70,7 @@ class DrawTableFilterTest extends BrowserKitTestCase
 
         $i=0;
         foreach($output as $key=>$value) {
-            if(!str_contains($key,"data-col:$i") &&  !str_contains($value,"data-col:$i")){
+            if(!Str::contains($key,"data-col:$i") &&  !Str::contains($value,"data-col:$i")){
                 echo $key." OR ".$value." do not contain data-col:$i";
                 $this->assertFalse(true);
             }

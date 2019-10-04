@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 /**
  * Will return true if the path exists, else false
  * E.g of usage: if(trans_exists("validation.required")) { //do whatever if it exists } //trans_exists("validation.required") will return true since it exists
@@ -42,7 +44,7 @@ function translate_array(array $array, $lang_path)
         }else{
             //throw new Exception("Invalid trans path $trans_path");
             $new_key = ucwords(str_replace("_"," ",$key));
-            if(str_contains($new_key, "^" )){
+            if(Str::contains($new_key, "^" )){
                 $new_key = str_before_first("^", $new_key);
             }
         }
@@ -155,7 +157,7 @@ function get_translations_from_string($lang_path, $value_to_translate, $check_al
     }
 
     $trans_path_value = $lang_path . "." . $new_value;
-    if(str_contains($trans_path_value,"^" )){
+    if(Str::contains($trans_path_value,"^" )){
         $trans_path_value = str_before_first("^",$trans_path_value);
     }
 
@@ -169,7 +171,7 @@ function get_translations_from_string($lang_path, $value_to_translate, $check_al
         $new_value = ucwords(str_replace("_"," ",$new_value));
         //debug_info($new_value);
         //debug_info(str_before_first("^",$new_value ));
-        if(str_contains($new_value,"^" )){
+        if(Str::contains($new_value,"^" )){
             $new_value = str_before_first("^", $new_value);
         }
         //$new_value = str_before_first("^", $new_value);

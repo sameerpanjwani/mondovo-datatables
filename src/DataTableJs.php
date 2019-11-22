@@ -456,18 +456,18 @@ class DataTableJs implements DataTableJsInterface
     {
 
         foreach($this->tag_manager_column as $key=>$tag_column) {
-            $html_string = ' <a class="icon-btn btn blue add-to-tag-manager" data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $tag_column . '" data-column-type="' . $this->tag_manager_column_type[$key] . '" ><i class="fa fa-plus"></i> <div>' . trans($this->language_path . '.assign') . ' ' . trans($this->language_path . '.tags_info') . ' ' . $this->tag_manager_button_text[$key] . '</div></a>';
+            $html_string = ' <a class="icon-btn btn blue add-to-tag-manager" data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $tag_column . '" data-column-type="' . $this->tag_manager_column_type[$key] . '" ><i class="fa fa-plus"></i> <div style="width:112px; height:28px; white-space: pre-line;">' . trans($this->language_path . '.assign') . ' ' . trans($this->language_path . '.tags_info') . ' ' . $this->tag_manager_button_text[$key] . '</div></a>';
             $this->addToCheckboxControls($html_string);
         }
 
         foreach ($this->keyword_manager_column as $key => $keyword_column) {
-            $html_string = ' <a class="icon-btn btn blue add-to-keyword-manager" data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $keyword_column . '" data-column-type="' . $this->keyword_manager_column_type[$key] . '" ><i class="fa fa-plus"></i> <div>' . trans($this->language_path . '.add_to') . ' ' . $this->keyword_manager_button_text[$key] . '<br>' . trans($this->language_path . '.keyword_manager') . '</div></a>';
+            $html_string = ' <a class="icon-btn btn blue add-to-keyword-manager" data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $keyword_column . '" data-column-type="' . $this->keyword_manager_column_type[$key] . '" ><i class="fa fa-plus"></i> <div style="width:112px; height:28px; white-space: pre-line;">' . trans($this->language_path . '.add_to') . ' ' . $this->keyword_manager_button_text[$key] . '<br>' . trans($this->language_path . '.keyword_manager') . '</div></a>';
 
             $this->addToCheckboxControls($html_string);
         }
 
         foreach ($this->page_manager_column as $key => $page_column) {
-            $html_string = ' <a class="icon-btn btn blue add-to-page-manager" data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $page_column . '" data-column-type="' . $this->page_manager_column_type[$key] . '" ><i class="fa fa-plus"></i> <div>' . trans($this->language_path . '.add_to') . ' ' . $this->page_manager_button_text[$key] . '<br>' . trans($this->language_path . '.page_manager') . '</div></a>';
+            $html_string = ' <a class="icon-btn btn blue add-to-page-manager" data-toggle="modal" href="#" data-table-id="' . $table_id . '" data-column-index="' . $page_column . '" data-column-type="' . $this->page_manager_column_type[$key] . '" ><i class="fa fa-plus"></i> <div style="width:112px; height:28px; white-space: pre-line;">' . trans($this->language_path . '.add_to') . ' ' . $this->page_manager_button_text[$key] . '<br>' . trans($this->language_path . '.page_manager') . '</div></a>';
 
             $this->addToCheckboxControls($html_string);
         }

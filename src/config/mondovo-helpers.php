@@ -13,7 +13,8 @@ return [
 	*/
 	'package_helpers' => [
 		'translation-helpers',
-		'array-helpers'
+		'array-helpers',
+		'custom-str-helpers',
 	],
 
 	/*

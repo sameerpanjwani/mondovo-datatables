@@ -74,8 +74,10 @@ MvDataTableCheckbox.insertUniform("{{$table_id}}");
 MvDataTableCheckbox.insertIntoCheckboxControlsExtraText("{{$table_id}}", "{{$checkbox_control_text}}");
 MvDataTableCheckbox.disableFilter("{{$table_id}}");
 /*MvDataTableFilter.applyFilterClass("{{$table_id}}");*/
-<?php if($hide_default_columns){ ?>
-MvDataTableFilter.hideDefaultHiddenColumns('{{$table_id}}');
+<?php if($hide_default_columns){
+$pdf_status = ($pdf_view == "yes") ? "true" : "false";
+?>
+MvDataTableFilter.hideDefaultHiddenColumns('{{$table_id}}', {{ $pdf_status }});
 <?php } ?>
 MvDataTableFilter.adjustOddEvenColumns('{{$table_id}}');
 

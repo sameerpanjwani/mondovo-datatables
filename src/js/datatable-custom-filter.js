@@ -59,6 +59,7 @@ var MvDataTableFilterDesign = {
     exportReportFailureMessage: "Sorry, unable to export the report",
     managerGuestUserErrorMessage: "Please login/register to access this feature",
     clearAllFilterCallback: false,
+    shouldRefreshKgData: false,
 
     ColumnFilter: function (tableId, column_index) {
         return '<div  class="column_filter_container dropdown">' +
@@ -989,6 +990,9 @@ var MvDataTableFilter = function () {
         MvDataTableCheckbox.getValuesToCopy(table_id, column_index, function (records) {
             var values_to_be_copied = '';
             for (var i = 0; i < records.length; i++) {
+                if(records[i] == ''){
+                    continue
+                }
                 values_to_be_copied += records[i] + '\n';
             }
             var temp_textarea = $('<textarea>');
@@ -1157,18 +1161,27 @@ var MvDataTableFilter = function () {
         var table_id = $(self).attr('data-table-id');
         var column_index = $(self).attr('data-column-index');
         var data_column_type = $(self).attr('data-column-type');
-        MvDataTableCheckbox.getTableColumnValues(table_id, column_index, function (records, record_count) {
+        //MvDataTableCheckbox.getTableColumnValues(table_id, column_index, function (records, record_count) {
+        MvDataTableCheckbox.getValuesToCopy(table_id, column_index, function (records) {
             var modal_ref = $('#' + modal_id);
-            modal_ref.find('#' + selected_qty_id).html(record_count);
             modal_ref.modal('show');
             $("#" + form_id).data("table-id", table_id);
             $("#" + form_id).data("modal-id", modal_id);
             var records_details = [];
             var records_details_str = '';
+            var record_count = 0;
             for (var i = 0; i < records.length; i++) {
                 //records_details.push({name: data_column_type + '[]', value: records[i]});
-                records_details_str += records[i] + ',';
+                if(records[i] == ''){
+                    continue;
+                }
+                var record_array = records[i].split("\n");
+                record_count += record_array.length;
+                var record_string = record_array.join();
+                record_string = record_string.replace(/,\s*$/, "");
+                records_details_str += record_string + ',';
             }
+            modal_ref.find('#' + selected_qty_id).html(record_count);
             var charlist = ',';
             charlist = !charlist ? ' \\s\u00A0' : (charlist + '')
                 .replace(/([[\]().?/*{}+$^:])/g, '\\$1');
@@ -1293,7 +1306,7 @@ var MvDataTableFilter = function () {
 
             var list_exist = $(this).find('div.keyword-group-wrapper').length > 0;
 
-            if(list_exist)
+            if(list_exist && !MvDataTableFilterDesign.shouldRefreshKgData)
             {
                 return;
             }
@@ -2004,6 +2017,7 @@ var MvDataTableFilter = function () {
         var filter_sub_type_radio_selector_text = "input[name='" + table_id + "FilterTextArea" + column_index + "_radio']";
 
         var searched_text = words_json.join('\n');
+        searched_text = removeDups(searched_text);
         var radio_type = '';
 
         //Pasting the filtered text
@@ -2097,6 +2111,7 @@ var MvDataTableFilter = function () {
         var filter_sub_type_radio_selector_text = "input[name='" + table_id + "FilterTextArea" + column_index + "_radio']";
 
         var searched_text = words_json.join('\n');
+        searched_text = removeDups(searched_text);
         var radio_type = '';
         var parent_keyword_filter_type = '';
         var filter_condition_ref = $("#" + table_id + "_filter >ul>." + css_class.filter_conditions_container);
@@ -2993,6 +3008,7 @@ var MvDataTableFilter = function () {
             },
             success: function (response) {
                 this.mySuccess();
+                MvDataTableFilterDesign.shouldRefreshKgData = false;
                 progress_bar.val(100);
                 clearInterval(interval);
                 progress_bar.val(0);
@@ -3137,11 +3153,14 @@ var MvDataTableFilter = function () {
         applyFilterClass: function (table_id) {
             applyFilterClass(table_id);
         },
-        hideDefaultHiddenColumns: function (table_id) {
+        hideDefaultHiddenColumns: function (table_id, pdf_view) {
             //This is to hide columsn where we deine the class .default-hidden on the th
             //On 27th August, 2016 added second 'false' parameter to visible functions, hoping to see if it makes impact on speed. I think it made impact. (Sameer Panjwani). If the columns don't redraw properly, then we'll need to remove this or to not compromise on speed can try recalculate function (refer docs of visible)
             var table = $('#' + table_id).DataTable();
             table.columns('.default-hidden').visible(false,false);
+            if(pdf_view) {
+                table.columns('.hidden-for-pdf').visible(false, false);
+            }
         },
         adjustOddEvenColumns: function (table_id) {
             var table = $('#' + table_id).DataTable();
@@ -3532,6 +3551,16 @@ function copy_text_manual(text)
         });
 
     return ;
+}
+
+function removeDups(names) {
+    var unique = {};
+    names.forEach(function(i) {
+        if(!unique[i]) {
+            unique[i] = true;
+        }
+    });
+    return Object.keys(unique);
 }
 
 function make_array(data_object) {

@@ -269,6 +269,7 @@ var MvDataTableFilter = function () {
 
     var DataTableFilterSettings = {
         text: ["=", "Not Equals", "Contains", "Does not contain", "Contains (multiple)", "Does not contain (multiple)", "Starts With", "Ends With", "Is Empty", "Is Not Empty"],
+        json: ["="],
         select: ["=", "Not Equals"],
         filter: ['In Tags', 'In Keywords', 'In Pages', 'Is of', 'Not In Tags', 'Not In Keywords', 'Not In Pages'],
         number: ['=', "Not Equals", "&lt;", "&gt;", "&lt;=", "&gt;=", "Between", "Is Empty", "Is Not Empty"],
@@ -521,6 +522,15 @@ var MvDataTableFilter = function () {
                     domObj.eq(1).html(MvDataTableFilterDesign.TextField(tableId + "FilterText" + column_index));
                     $("body").append(MvDataTableFilterDesign.ContainsMultipleModal(tableId, column_index));
                     $("body").append(MvDataTableFilterDesign.DoesNotContainsMultipleModal(tableId, column_index));
+                    break;
+
+                case 'json':
+                    var select_id = checkSelectId(self);
+                    if (!select_id) {
+                        return false;
+                    }
+                    domObj.eq(0).html(MvDataTableFilterDesign.DropDown(tableId + "Operator" + column_index, DataTableFilterSettings.json));
+                    domObj.eq(1).html(MvDataTableFilterDesign.SecondDropDown(tableId + "FilterSelect" + column_index, select_id));
                     break;
 
                 case 'number':
@@ -1948,6 +1958,10 @@ var MvDataTableFilter = function () {
                     operand_ref = $("#" + table_id + "FilterNumber" + column_index + '_1');
                     operand_ref_2 = $("#" + table_id + "FilterNumber" + column_index + '_2');
                     break;
+                case 'json':
+                    operator_allowed = DataTableFilterSettings.select;
+                    operand_ref = $("#" + table_id + "FilterSelect" + column_index);
+                    break;
                 case 'select':
                     operator_allowed = DataTableFilterSettings.select;
                     operand_ref = $("#" + table_id + "FilterSelect" + column_index);
@@ -2606,6 +2620,10 @@ var MvDataTableFilter = function () {
             column_value = select_ref.find('option:selected').text();
             search_value = select_ref.val();
         }
+        else if (filter_type == 'json') {
+            column_value = select_ref.find('option:selected').text();
+            search_value = select_ref.val();
+        }
         else if (filter_type == 'number') {
 
             var selected_option = operator_ref.find('option:selected').text();
@@ -2724,7 +2742,7 @@ var MvDataTableFilter = function () {
         if (operator_value == "Contains (multiple)" || operator_value == "Does not contain (multiple)"){
             columns[operator_value].splice(0, 1, {search_value: search_value, concat_columns: concat_columns, all_values: all_values})
         }else{
-            columns[operator_value].push({search_value: search_value, concat_columns: concat_columns, all_values: all_values});
+            columns[operator_value].push({search_value: search_value, concat_columns: concat_columns, all_values: all_values, filter_type: filter_type});
         }
 
         /* Reset All Controls */

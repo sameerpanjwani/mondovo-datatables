@@ -1261,8 +1261,8 @@ var MvDataTableFilter = function () {
         });
 
         // Register PrefilterToolbar
-        $("." + css_class.pre_filter_link_toolbar).off('click');
-        $("." + css_class.pre_filter_link_toolbar).click(function () {
+        $(document).off("click", "." + css_class.pre_filter_link_toolbar);
+        $(document).on('click', "." + css_class.pre_filter_link_toolbar, function (event) {
             processPreFilter(this);
             /* var parent_li = $(this).parents("li");
              parent_li.addClass("active");

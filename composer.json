@@ -9,11 +9,11 @@
     ],
     "require": {
         "php": "^7.2",
-        "illuminate/config": "^6.0",
-        "illuminate/database": "^6.0",
-        "illuminate/routing": "^6.0",
-        "illuminate/session": "^6.0",
-        "illuminate/support": "^6.0",
+        "illuminate/config": "^7.0",
+        "illuminate/database": "^7.0",
+        "illuminate/routing": "^7.0",
+        "illuminate/session": "^7.0",
+        "illuminate/support": "^7.0",
         "yajra/laravel-datatables-oracle": "~9.0",
         "maatwebsite/excel": "^3.1",
         "nlp-tools/nlp-tools": "~0.1.1"

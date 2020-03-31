@@ -121,7 +121,7 @@ class MyDataTable
         $file_name = $file_name . " - " . date('jS F Y');
 
         list($head_rows, $rows) = $this->prepareExcelRows($response, $paying_user);
-        return \Maatwebsite\Excel\Excel::download(new ExportToExcel(array_merge($head_rows, $rows)), "test.xlsx");
+        return Excel::download(new ExportToExcel(array_merge($head_rows, $rows)), "test.xlsx");
 
         $excel = Excel::create($file_name, function ($excel) use ($file_name, $report_name, $report_date, $head_rows, $rows, $paying_user) {
             $sheet_name = (strlen($file_name) > 31) ? substr($file_name, 0, 29) . ".." : $file_name;
@@ -528,7 +528,7 @@ class MyDataTable
      */
     public function make($mDataSupport = false)
     {
-	    $filter_applied = false;
+        $filter_applied = false;
         $export = \Request::get('export');
         $checkbox_column = \Request::get('checkbox_column');
 
@@ -540,19 +540,19 @@ class MyDataTable
         $data_keyword_grouping = \Request::get('data_keyword_grouping') == 'on';
         $keyword_grouping_column_name = \Request::get('keyword_grouping_column_name');
         $keyword_grouping_column_index = \Request::get('keyword_grouping_column_index');
-	    if((request()->has('maximizerFilter') && !empty(request('maximizerFilter'))) ||
-		    (request()->has('search') && isset(request('search')['value']) && !empty(request('search')['value']))){
-		    $filter_applied = true;
-	    }
+        if((request()->has('maximizerFilter') && !empty(request('maximizerFilter'))) ||
+            (request()->has('search') && isset(request('search')['value']) && !empty(request('search')['value']))){
+            $filter_applied = true;
+        }
 
         $data = $this->datatable->make($mDataSupport);
-	    if($filter_applied){
-		    $temp_data = $data->getData();
-		    $temp_data->filter_applied = $filter_applied;
-		    $data = new JsonResponse($temp_data);
-	    }
+        if($filter_applied){
+            $temp_data = $data->getData();
+            $temp_data->filter_applied = $filter_applied;
+            $data = new JsonResponse($temp_data);
+        }
 
-	    if ($data_keyword_grouping && !empty($keyword_grouping_column_name)) {
+        if ($data_keyword_grouping && !empty($keyword_grouping_column_name)) {
             return $this->setKeywordGroups($keyword_grouping_column_name, $data, $keyword_grouping_column_index);
         } elseif ($data_keyword_grouping) {
             return json_encode([]);

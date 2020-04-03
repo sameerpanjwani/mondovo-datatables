@@ -121,7 +121,7 @@ class MyDataTable
         $file_name = $file_name . " - " . date('jS F Y');
 
         list($head_rows, $rows) = $this->prepareExcelRows($response, $paying_user);
-        return Excel::download(new ExportToExcel(array_merge($head_rows, $rows)), "test.xlsx");
+        //return Excel::download(new ExportToExcel(array_merge($head_rows, $rows)), "test.xlsx");
 
         $excel = Excel::create($file_name, function ($excel) use ($file_name, $report_name, $report_date, $head_rows, $rows, $paying_user) {
             $sheet_name = (strlen($file_name) > 31) ? substr($file_name, 0, 29) . ".." : $file_name;

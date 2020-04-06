@@ -9,22 +9,35 @@
 namespace Mondovo\DataTable;
 
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromCollection;
+//use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\DefaultValueBinder;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class ExportToExcel extends DefaultValueBinder implements FromCollection, WithCustomValueBinder
+class ExportToExcel extends DefaultValueBinder implements FromView, WithCustomValueBinder
 {
-    protected $excel_data;
+    protected $head_rows;
+    protected $data_rows;
+    protected $file_name;
+    protected $report_name;
+    protected $report_date;
+    protected $paying_user;
 
-    public function __construct($excel_data)
+    public function __construct($head_rows, $data_rows, $file_name, $report_name, $report_date, $paying_user)
     {
-        $this->excel_data = $excel_data;
+        $this->head_rows = $head_rows;
+        $this->data_rows = $data_rows;
+        $this->file_name = $file_name;
+        $this->report_name = $report_name;
+        $this->report_date = $report_date;
+        $this->paying_user = $paying_user;
     }
+
     public function bindValue(Cell $cell, $value)
     {
         if (is_numeric($value)) {
@@ -40,7 +53,24 @@ class ExportToExcel extends DefaultValueBinder implements FromCollection, WithCu
         return parent::bindValue($cell, $value);
     }
 
-    public function collection()
+    public function view(): View
+    {
+        return view('mondovo.datatable.export-excel', $this->getDataArray());
+    }
+
+    protected function getDataArray(): array
+    {
+        return [
+            'head_rows' => $this->head_rows,
+            'data_rows' => $this->data_rows,
+            'file_name' => $this->file_name,
+            'report_name' => $this->report_name,
+            'report_date' => $this->report_date,
+            'paying_user' => $this->paying_user
+        ];
+    }
+
+    /*public function collection()
     {
         $data = [
             [
@@ -55,5 +85,5 @@ class ExportToExcel extends DefaultValueBinder implements FromCollection, WithCu
             ]
         ];
         return new Collection($data);
-    }
+    }*/
 }

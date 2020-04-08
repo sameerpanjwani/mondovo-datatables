@@ -121,157 +121,34 @@ class MyDataTable
         $file_name = $file_name . " - " . date('jS F Y');
 
         list($head_rows, $rows) = $this->prepareExcelRows($response, $paying_user);
-        return Excel::download(new ExportToExcel($head_rows, $rows, $file_name, $report_name, $report_date, $paying_user), $file_name . "." . $file_type);
+        $logo_location = $this->getLogoLocation();
 
-        $excel = Excel::create($file_name, function ($excel) use ($file_name, $report_name, $report_date, $head_rows, $rows, $paying_user) {
-            $sheet_name = (strlen($file_name) > 31) ? substr($file_name, 0, 29) . ".." : $file_name;
-            $excel->sheet($sheet_name, function ($sheet) use ($report_name, $report_date, $head_rows, $rows, $paying_user) {
-                $row_count = 3;
+        return Excel::download(new ExportToExcel($head_rows, $rows, $file_name, $report_name, $report_date, $logo_location, $paying_user), $file_name . "." . $file_type);
+    }
 
-                if (!$paying_user) {
-                    $sheet->setCellValue('B2', "Only 5 rows shown as your plan does not allow for full downloads or you are still under a free trial.");
-                    $sheet->mergeCells('B2:H2');
+    protected function getLogoLocation()
+    {
+        $logo_location = $this->getLogo();
+        $disk_name = $this->getStorageDisk();
 
-                    $sheet->row(2, function ($row) {
-                        $row->setFontWeight('bold');
-                        $row->setFontColor('#ff0000');
-                    });
-                }
+        if (Storage::disk($disk_name)->exists($logo_location)) {
+            $local_logo_location = $this->getLocalStorageDisk();
+            $logo = Storage::disk($disk_name)->get($logo_location);
+            if($logo){
+                $ext = pathinfo($logo_location, PATHINFO_EXTENSION);
+                $file_name = md5(microtime(true)).".$ext";
+                Storage::disk($local_logo_location)->put($this->logo_sub_path."/".$file_name, $logo);
+            }
+            $local_file_folder_path = \Storage::disk($local_logo_location)->getDriver()->getAdapter()->getPathPrefix();
+            $this->delete_older_than($local_file_folder_path.$this->logo_sub_path, 60);
+            $logo_location = $local_file_folder_path.$this->logo_sub_path."/".$file_name;
+        }else{
+            if(!file_exists($logo_location)){
+                $logo_location = $this->getDefaultLogo();
+            }
+        }
 
-                if ($report_name != '') {
-                    $sheet->setCellValue('A' . $row_count, "Report Name:");
-                    $sheet->setCellValue('B' . $row_count, $report_name);
-
-                    $sheet->row($row_count, function ($row) use ($paying_user) {
-                        $row->setFontWeight('bold');
-
-                        if (!$paying_user)
-                            $row->setFontColor('#ff0000');
-                    });
-
-                    $row_count++;
-                }
-
-                if ($report_date != '') {
-                    $sheet->setCellValue('A' . $row_count, "Report Date:");
-                    $sheet->setCellValue('B' . $row_count, $report_date);
-
-                    $sheet->row($row_count, function ($row) use ($paying_user) {
-                        $row->setFontWeight('bold');
-
-                        if (!$paying_user)
-                            $row->setFontColor('#ff0000');
-                    });
-
-                    $row_count++;
-                }
-
-                $row_count++;
-
-
-                /////////////
-                //dd($head_rows);
-                $header_starts_at = $row_count;
-                $index = 0;
-                $merged_rows = [];
-                foreach ($head_rows as $row_heading) {
-                    $alphabet_index = 0;
-                    $col_index = 0;
-                    foreach ($row_heading as $heading) {
-                        //print_data($merged_rows);
-                        if (isset($merged_rows[$row_count])) {
-                            while (in_array($alphabet_index, $merged_rows[$row_count])) {
-                                $alphabet_index++;
-                            }
-                        }
-
-                        $cell = $this->getExcelColumnNameFromNumber($alphabet_index) . "$row_count";
-                        $cell_val = strip_tags($heading->col_name);
-                        //echo '$sheet->setCellValue("' . $cell . '", "'. $cell_val . '");' . "<br />";
-                        while ($sheet->getCell($cell) != "") {
-                            $alphabet_index++;
-                            $cell = $this->getExcelColumnNameFromNumber($alphabet_index) . "$row_count";
-                        }
-                        $sheet->setCellValue($cell, $cell_val);
-
-                        if ($heading->rowspan > 1) {
-                            $merge = $this->getExcelColumnNameFromNumber($alphabet_index) . $row_count . ":" . $this->getExcelColumnNameFromNumber($alphabet_index) . ($row_count + $heading->rowspan - 1);
-                            //echo '$sheet->mergeCells("' . $merge . '");' . "<br>";
-                            $sheet->mergeCells($merge);
-
-                            for ($i = $row_count + 1; $i < $row_count + $heading->rowspan; $i++) {
-                                $merged_rows[$i][] = $alphabet_index;
-                            }
-                        }
-                        if ($heading->colspan > 1) {
-                            $merge = $this->getExcelColumnNameFromNumber($alphabet_index) . $row_count . ":" . $this->getExcelColumnNameFromNumber($alphabet_index + ($heading->colspan - 1)) . $row_count;
-                            //echo "$alphabet_index + " . $heading->colspan . "<br>";
-                            //echo '$sheet->mergeCells("' . $merge . '");' . "<br>";
-                            $sheet->mergeCells($merge);
-                        }
-                        //echo "<br>";
-
-                        $sheet->cell($cell, function ($cell) {
-                            // manipulate the cell
-                            $cell->setBorder('solid', 'solid', 'solid', 'solid');
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-
-                        $alphabet_index += $heading->colspan;
-                        $col_index++;
-                    }
-
-                    $index++;
-                    $row_count++;
-                }
-                //dd('TEST');
-
-                ////////////
-
-                $j = $header_starts_at + count($head_rows);
-                for ($i = $header_starts_at; $i < $j; $i++)
-                    $sheet->row($i, function ($row) {
-                        $row->setFontWeight('bold');
-                        $row->setBackground('#366092');
-                        $row->setFontColor('#ffffff');
-                        $row->setFontSize(12);
-                    });
-
-                $sheet->fromArray($rows, null, 'A' . $row_count, true, false);
-                $logo_location = $this->getLogo();
-                $disk_name = $this->getStorageDisk();
-
-                if (Storage::disk($disk_name)->exists($logo_location)) {
-                    $local_logo_location = $this->getLocalStorageDisk();
-                    $logo = Storage::disk($disk_name)->get($logo_location);
-                    if($logo){
-                        $ext = pathinfo($logo_location, PATHINFO_EXTENSION);
-                        $file_name = md5(microtime(true)).".$ext";
-                        Storage::disk($local_logo_location)->put($this->logo_sub_path."/".$file_name, $logo);
-                    }
-                    $local_file_folder_path = \Storage::disk($local_logo_location)->getDriver()->getAdapter()->getPathPrefix();
-                    $this->delete_older_than($local_file_folder_path.$this->logo_sub_path, 60);
-                    $logo_location = $local_file_folder_path.$this->logo_sub_path."/".$file_name;
-                }else{
-                    if(!file_exists($logo_location)){
-                        $logo_location = $this->getDefaultLogo();
-                    }
-                }
-                $objDrawing = new PHPExcel_Worksheet_Drawing;
-                $objDrawing->setPath($logo_location);
-
-                $objDrawing->setCoordinates('A1');
-                $objDrawing->setOffsetX(10);
-                $objDrawing->setOffsetY(20);
-                $objDrawing->setWorksheet($sheet);
-
-                $sheet->getRowDimension('1')
-                    ->setRowHeight(70);
-
-            });
-        })->export($file_type);
-        return $excel;
+        return $logo_location;
     }
 
     public function delete_older_than($dir, $max_age) {

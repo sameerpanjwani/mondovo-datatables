@@ -20,5 +20,7 @@ return [
 	'manager_url' => '',
 	'kd_modal_url' => '',
 	'logo_storage_disk' => 'local',
-	'local_storage_disk' => 'local'
+	'local_storage_disk' => 'local',
+    'primary_color' => '#366092',
+    'primary_font_color' => '#FFFFFF'
 ];

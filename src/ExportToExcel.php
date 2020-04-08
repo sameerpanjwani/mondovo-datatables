@@ -10,8 +10,6 @@ namespace Mondovo\DataTable;
 
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
-//use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\DefaultValueBinder;
